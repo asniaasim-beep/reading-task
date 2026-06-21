@@ -49,28 +49,45 @@ const COMPLETION_URL = "https://app.prolific.com/submissions/complete?cc=CX864VB
 const params = new URLSearchParams(window.location.search);
 const FRAMES=['plain','setaside'], RUNGS=[1,2,3,4,5];
 let frame=params.get('frame'); let rung=params.get('rung')?parseInt(params.get('rung'),10):null;
-if(!FRAMES.includes(frame)) frame=FRAMES[Math.floor(Math.random()*2)];
-if(!RUNGS.includes(rung))   rung =RUNGS[Math.floor(Math.random()*5)];
 const forced=(params.get('frame')||params.get('rung'))?true:false;
 let pid=params.get('PROLIFIC_PID')||params.get('pid')||('anon_'+Math.random().toString(36).slice(2,8));
-const cell=STIMULI[frame][rung];
-
-const items=[{text:cell.cause,role:'C'},{text:cell.selfblame,role:'B'},{text:cell.scene,role:'S'},{text:cell.neutral,role:'N'}];
-function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-const shown=shuffle(items);                              // one joint shuffle
-const paragraph=shown.map(x=>x.text).join(' ');          // == 4 sentences concatenated
-const optionTexts=shown.map(x=>x.text);                  // options in paragraph order
-const posRoles=shown.map(x=>x.role);
-const causePosition=posRoles.indexOf('C')+1, selfblamePosition=posRoles.indexOf('B')+1;
 
 const jsPsych=initJsPsych();
 const SAVE_FILENAME = pid+'_'+Math.random().toString(36).slice(2,8)+'.csv';
-jsPsych.data.addProperties({pid,rung,frame,
-  pos1_role:posRoles[0],pos2_role:posRoles[1],pos3_role:posRoles[2],pos4_role:posRoles[3],
-  cause_position:causePosition,selfblame_position:selfblamePosition,jspsych_version:'8.2.3'});
-
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const optBtn=(c,i)=>'<button class="jspsych-btn opt-btn">'+esc(c)+'</button>';
+
+// cell-dependent state, assigned in boot() once the condition is known
+let cell, posRoles, causePosition, selfblamePosition, paragraph, optionTexts;
+
+// boot(): balanced rotation via DataPipe for live participants; ?frame=&rung= override for testing
+async function boot(){
+  if(forced){
+    if(!FRAMES.includes(frame)) frame=FRAMES[Math.floor(Math.random()*2)];
+    if(!RUNGS.includes(rung))   rung =RUNGS[Math.floor(Math.random()*5)];
+  } else {
+    let c;
+    try { c = await jsPsychPipe.getCondition(DATAPIPE_ID); }      // 0..9 in balanced rotation
+    catch(e){ c = Math.floor(Math.random()*10); }                 // fail-safe: never lose a participant
+    if(typeof c!=='number'||c<0||c>9) c=Math.floor(Math.random()*10);
+    frame = FRAMES[Math.floor(c/5)];   // 0-4 -> plain, 5-9 -> setaside
+    rung  = RUNGS[c%5];                 // -> rung 1..5
+  }
+  cell=STIMULI[frame][rung];
+  const items=[{text:cell.cause,role:'C'},{text:cell.selfblame,role:'B'},{text:cell.scene,role:'S'},{text:cell.neutral,role:'N'}];
+  const shown=shuffle(items);                              // one joint shuffle
+  paragraph=shown.map(x=>x.text).join(' ');                // == 4 sentences concatenated
+  optionTexts=shown.map(x=>x.text);                        // options in paragraph order
+  posRoles=shown.map(x=>x.role);
+  causePosition=posRoles.indexOf('C')+1; selfblamePosition=posRoles.indexOf('B')+1;
+  jsPsych.data.addProperties({pid,rung,frame,
+    pos1_role:posRoles[0],pos2_role:posRoles[1],pos3_role:posRoles[2],pos4_role:posRoles[3],
+    cause_position:causePosition,selfblame_position:selfblamePosition,jspsych_version:'8.2.3'});
+  buildAndRun();
+}
+
+function buildAndRun(){
 const T=[];
 
 // 1) consent
@@ -128,6 +145,9 @@ if(forced){const b=document.createElement('div');b.className='testing-banner';
   b.textContent='TESTING — frame='+frame+'  rung='+rung+'  pid='+pid+'  (forced via URL)';document.body.appendChild(b);}
 
 jsPsych.run(T);
+}  // end buildAndRun
+
+boot();
 
 // ---- build the one locked wide row from the collected data ----
 function wideRow(){
