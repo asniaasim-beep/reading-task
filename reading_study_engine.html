@@ -112,7 +112,7 @@ T.push({
   action: "save",
   experiment_id: DATAPIPE_ID,
   filename: SAVE_FILENAME,
-  data_string: ()=> jsPsych.data.get().csv()    // full jsPsych long data (DataPipe-native; has trial_type). Wide row derived in analysis.
+  data_string: ()=> wideRow().csv    // clean wide row incl. trial_type; small & parseable
 });
 
 // 9) completion code — terminal screen (no advance). Data has already saved above.
@@ -141,6 +141,7 @@ function wideRow(){
   const pickedRole=(pick.response!=null)?posRoles[pick.response]:null;
   const totalMs=d.values().reduce((s,t)=>s+(t.rt||0),0);
   const wide={
+    trial_type:'reading_task',
     pid,rung,frame,
     pos1_role:posRoles[0],pos2_role:posRoles[1],pos3_role:posRoles[2],pos4_role:posRoles[3],
     cause_position:causePosition, selfblame_position:selfblamePosition,
