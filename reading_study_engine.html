@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Reading study</title>
+<!-- jsPsych 8 — VERSION PINNED (no "latest") -->
+<link  href="https://unpkg.com/jspsych@8.2.3/css/jspsych.css" rel="stylesheet" />
+<script src="https://unpkg.com/jspsych@8.2.3/dist/index.browser.min.js"></script>
+<script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.1.0/dist/index.browser.min.js"></script>
+<script src="https://unpkg.com/@jspsych/plugin-survey-text@2.1.0/dist/index.browser.min.js"></script>
+<script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@2.2.0/dist/index.browser.min.js"></script>
+<script src="https://unpkg.com/@jspsych-contrib/plugin-pipe@0.6.0/dist/index.browser.min.js"></script>
+<style>
+  body { background:#f4f2ee; }
+  .jspsych-display-element { font-family: Georgia, 'Times New Roman', serif; }
+  .jspsych-content { max-width: 760px; }
+  .wrap { max-width: 720px; margin: 0 auto; text-align:left; }
+  .wrap h3 { margin: 0 0 12px; }
+  .wrap p { line-height:1.6; }
+  .qtext { font-size: 1.05rem; font-weight: bold; margin: 0 0 14px; line-height:1.5; }
+  .paragraph { font-size: 1.16rem; line-height: 1.7; margin: 8px 0 22px; color:#1a1a1a; }
+  #jspsych-html-button-response-btngroup { display:flex; flex-direction:column; gap:12px; }
+  .opt-btn { display:block; width:100%; text-align:left; white-space:normal;
+    font-family: Georgia, serif; font-size:1.05rem; line-height:1.5; padding:14px 16px;
+    border:1px solid #c9c4bb; border-radius:8px; background:#fff; cursor:pointer; }
+  .opt-btn:hover { border-color:#7a7468; background:#fbfaf8; }
+  .jspsych-survey-multi-choice-preamble { text-align:left; }
+  .testing-banner { position:fixed; top:0; left:0; right:0; background:#3a3a3a; color:#fff;
+    font-family: monospace; font-size:12px; padding:4px 10px; z-index:9999; text-align:center; }
+  .summary { max-width:760px; margin:0 auto; text-align:left; font-family:monospace; font-size:13px; }
+  .summary pre { background:#fff; border:1px solid #ddd; padding:14px; border-radius:8px; overflow:auto; }
+  .dlbtn { font-family:sans-serif; font-size:14px; padding:8px 14px; margin:6px 8px 0 0;
+           border:1px solid #888; border-radius:6px; background:#fff; cursor:pointer; }
+</style>
+</head>
+<body>
+<script>
+/* === SEALED STIMULUS (verified export). Embargoed: this file is its only home. === */
+const STIMULI = {"plain": {"1": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I keep wishing I had simply remembered to send her the invitation.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Which is the most important sentence in this paragraph?"}, "2": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I feel stupid that I forgot to include one of my closest friends.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Which is the most important sentence in this paragraph?"}, "3": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I have started to wonder if I will ever be able to deeply connect with good people.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Which is the most important sentence in this paragraph?"}, "4": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I am starting to believe I am just not interesting enough to hold on to.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Which is the most important sentence in this paragraph?"}, "5": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I lie awake certain that I'm not lovable and deserve to be alone my whole life.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Which is the most important sentence in this paragraph?"}}, "setaside": {"1": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I keep wishing I had simply remembered to send her the invitation.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"}, "2": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I feel stupid that I forgot to include one of my closest friends.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"}, "3": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I have started to wonder if I will ever be able to deeply connect with good people.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"}, "4": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I am starting to believe I am just not interesting enough to hold on to.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"}, "5": {"cause": "Anna stopped talking to me because I forgot to invite her to my birthday.", "selfblame": "I lie awake certain that I'm not lovable and deserve to be alone my whole life.", "scene": "Anna and I used to talk every single day.", "neutral": "We had been close for almost two years.", "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"}}};
+const COPY = {"consent_preamble": "<div class='wrap'><h3>About this study</h3><p>You’re invited to take part in a short research study about how people read.</p><p><b>What you’ll do:</b> Read one short paragraph and answer two quick questions about it. It takes about 2–3 minutes.</p><p><b>Your data:</b> Your responses are de-identified for analysis. We record your responses, the time you take, and basic background information such as age range and gender. We do not collect your name. Your Prolific ID is collected only to confirm payment and manage data quality, and it will not be included in any published data.</p><p><b>Voluntary:</b> Taking part is your choice. You can stop at any time by closing the window; you’ll simply not be compensated for an incomplete response.</p><p><b>Contact:</b> Questions can be sent to asniaasim@gmail.com. This study is run by Asnia Asim, independent researcher.</p><p>By selecting “I agree” below, you confirm you are 18 or older, fluent in English, and consent to take part.</p></div>", "consent_q": "Do you consent to take part?", "consent_agree": "I agree — begin the study", "consent_decline": "I do not wish to take part", "instructions_html": "<div class='wrap'><h3>Instructions</h3><p>On the next screen you’ll see a short paragraph — a few sentences in which someone describes a difficult experience.</p><p>Please read the whole paragraph carefully. Then you’ll be asked to choose the <b>one sentence</b> you think is the most important, and to say in a line why you chose it.</p><p>There are no right or wrong answers. We’re interested in your honest judgment as a reader.</p></div>", "attn_preamble": "<div class='wrap'><p>Please read the sentence below carefully, then answer the question.</p><p class='paragraph'>By afternoon, the river had turned rough and dangerous, and the rowers struggled against the current.</p></div>", "attn_q": "By afternoon, the river was:", "attn_options": ["Calm", "Rough", "Frozen", "The sentence doesn’t say"], "attn_canonical": ["calm", "rough", "frozen", "nosay"], "why_prompt": "Why did you pick this sentence? Explain briefly, in one sentence. If you didn’t really have a reason, that’s fine — just say so.", "demo_preamble": "<div class='wrap'><p>A little about you (optional background). These help us describe who took part. They are not used to judge your answers.</p></div>", "age_q": "Your age range:", "age_options": ["18 to 24", "25 to 34", "35 to 44", "45 to 54", "55 to 64", "65+", "Prefer not to say"], "gender_q": "Your gender:", "gender_options": ["Woman", "Man", "Non binary", "Prefer to self-describe", "Prefer not to say"], "debrief_html": "<div class='wrap'><h3>Thank you for taking part.</h3><p>This study looks at how different readers judge what matters most in a short text, and whether people vary in ways an automated system might not. Because the study is ongoing, we’re keeping the full details brief for now so later participants aren’t influenced. If you’d like to know more once it’s complete, you can contact asniaasim@gmail.com.</p><p>If anything in this study brought up difficult feelings, support is available. In the US you can call or text 988 (Suicide &amp; Crisis Lifeline); elsewhere, findahelpline.com lists free services by country.</p></div>"};
+
+/* DataPipe save -> OSF project 6xwqh (private). Experiment is Active. */
+const DATAPIPE_ID = "xTRjQwQBv3yi";
+/* Prolific completion code — PLACEHOLDER, replace at Prolific wiring (step 5). */
+const COMPLETION_CODE = "PLACEHOLDER-CODE";
+
+const params = new URLSearchParams(window.location.search);
+const FRAMES=['plain','setaside'], RUNGS=[1,2,3,4,5];
+let frame=params.get('frame'); let rung=params.get('rung')?parseInt(params.get('rung'),10):null;
+if(!FRAMES.includes(frame)) frame=FRAMES[Math.floor(Math.random()*2)];
+if(!RUNGS.includes(rung))   rung =RUNGS[Math.floor(Math.random()*5)];
+const forced=(params.get('frame')||params.get('rung'))?true:false;
+let pid=params.get('PROLIFIC_PID')||params.get('pid')||('anon_'+Math.random().toString(36).slice(2,8));
+const cell=STIMULI[frame][rung];
+
+const items=[{text:cell.cause,role:'C'},{text:cell.selfblame,role:'B'},{text:cell.scene,role:'S'},{text:cell.neutral,role:'N'}];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const shown=shuffle(items);                              // one joint shuffle
+const paragraph=shown.map(x=>x.text).join(' ');          // == 4 sentences concatenated
+const optionTexts=shown.map(x=>x.text);                  // options in paragraph order
+const posRoles=shown.map(x=>x.role);
+const causePosition=posRoles.indexOf('C')+1, selfblamePosition=posRoles.indexOf('B')+1;
+
+const jsPsych=initJsPsych();
+const SAVE_FILENAME = pid+'_'+Math.random().toString(36).slice(2,8)+'.csv';
+jsPsych.data.addProperties({pid,rung,frame,
+  pos1_role:posRoles[0],pos2_role:posRoles[1],pos3_role:posRoles[2],pos4_role:posRoles[3],
+  cause_position:causePosition,selfblame_position:selfblamePosition,jspsych_version:'8.2.3'});
+
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const optBtn=(c,i)=>'<button class="jspsych-btn opt-btn">'+esc(c)+'</button>';
+const T=[];
+
+// 1) consent
+T.push({type:jsPsychSurveyMultiChoice,
+  preamble:COPY.consent_preamble,
+  questions:[{prompt:COPY.consent_q,name:'consent',options:[COPY.consent_agree,COPY.consent_decline],required:true}],
+  data:{task:'consent'},
+  on_finish:(d)=>{ if(d.response&&d.response.consent===COPY.consent_decline){
+    jsPsych.abortExperiment('Thank you \u2014 you have chosen not to take part. You may close this window.'); } }
+});
+// 2) instructions
+T.push({type:jsPsychHtmlButtonResponse, stimulus:COPY.instructions_html, choices:['Next'], data:{task:'instructions'}});
+// 3) attention check (BEFORE the stimulus, as in the warm-up)
+T.push({type:jsPsychSurveyMultiChoice,
+  preamble:COPY.attn_preamble,
+  questions:[{prompt:COPY.attn_q,name:'attn',options:COPY.attn_options,required:true}],
+  data:{task:'attn'}});
+// 4) stimulus / pick
+T.push({type:jsPsychHtmlButtonResponse,
+  stimulus:'<div class="wrap"><div class="qtext">'+esc(cell.question)+'</div><div class="paragraph">'+esc(paragraph)+'</div></div>',
+  choices:optionTexts, button_html:optBtn, data:{task:'pick'}});
+// 5) why
+T.push({type:jsPsychSurveyText,
+  questions:[{prompt:COPY.why_prompt,rows:3,columns:60,required:true,name:'why'}], data:{task:'why'}});
+// 6) demographics (optional background -> not required)
+T.push({type:jsPsychSurveyMultiChoice,
+  preamble:COPY.demo_preamble,
+  questions:[{prompt:COPY.age_q,name:'age',options:COPY.age_options,required:false},
+             {prompt:COPY.gender_q,name:'gender',options:COPY.gender_options,required:false}],
+  data:{task:'demo'}});
+// 7) debrief
+T.push({type:jsPsychHtmlButtonResponse, stimulus:COPY.debrief_html, choices:['Finish'], data:{task:'debrief'}});
+
+// 8) SAVE to DataPipe -> OSF (async; happens before the completion code is shown)
+T.push({
+  type: jsPsychPipe,
+  action: "save",
+  experiment_id: DATAPIPE_ID,
+  filename: SAVE_FILENAME,
+  data_string: ()=> wideRow().csv
+});
+
+// 9) completion code — terminal screen (no advance). Data has already saved above.
+T.push({
+  type: jsPsychHtmlButtonResponse,
+  choices: [],                         // terminal: nothing to click to leave
+  stimulus: ()=> endHTML(),
+  on_load: ()=> attachDownloads()
+});
+
+if(forced){const b=document.createElement('div');b.className='testing-banner';
+  b.textContent='TESTING — frame='+frame+'  rung='+rung+'  pid='+pid+'  (forced via URL)';document.body.appendChild(b);}
+
+jsPsych.run(T);
+
+// ---- build the one locked wide row from the collected data ----
+function wideRow(){
+  const d=jsPsych.data.get();
+  const attn=d.filter({task:'attn'}).values()[0]||{};
+  const pick=d.filter({task:'pick'}).values()[0]||{};
+  const why =d.filter({task:'why'}).values()[0]||{};
+  const demo=d.filter({task:'demo'}).values()[0]||{};
+  const attnSel=attn.response?attn.response.attn:null;
+  const attnCanon=attnSel?COPY.attn_canonical[COPY.attn_options.indexOf(attnSel)]:null;
+  const pickedPos=(pick.response!=null)?pick.response+1:null;
+  const pickedRole=(pick.response!=null)?posRoles[pick.response]:null;
+  const totalMs=d.values().reduce((s,t)=>s+(t.rt||0),0);
+  const wide={
+    pid,rung,frame,
+    pos1_role:posRoles[0],pos2_role:posRoles[1],pos3_role:posRoles[2],pos4_role:posRoles[3],
+    cause_position:causePosition, selfblame_position:selfblamePosition,
+    picked_position:pickedPos, picked_role:pickedRole, picked_is_cause:pickedRole==='C',
+    why_text:(why.response&&why.response.why)||'',
+    attn_response:attnCanon, attn_pass:attnCanon==='rough',
+    age:(demo.response&&demo.response.age)||'', gender:(demo.response&&demo.response.gender)||'',
+    rt_pick_ms:pick.rt!=null?pick.rt:'', rt_why_ms:why.rt!=null?why.rt:'',
+    total_ms:totalMs, completed:true, jspsych_version:'8.2.3'
+  };
+  const cols=Object.keys(wide);
+  const csv=cols.join(',')+'\n'+cols.map(k=>{let v=String(wide[k]).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}).join(',');
+  return {wide,cols,csv};
+}
+
+// ---- the final on-screen message ----
+function endHTML(){
+  let h='<div class="wrap"><h3>All done \u2014 thank you.</h3>'
+       +'<p>Your response has been saved. To confirm your submission, copy this completion code back into Prolific:</p>'
+       +'<p style="font-family:monospace;font-size:1.4rem;background:#fff;border:1px solid #ccc;border-radius:8px;padding:12px 16px;display:inline-block;">'
+       +esc(COMPLETION_CODE)+'</p></div>';
+  if(forced){
+    const w=wideRow();
+    h+='<div class="summary"><hr><h3>Captured wide row (testing view)</h3>'
+      +'<pre>'+esc(JSON.stringify(w.wide,null,2))+'</pre>'
+      +'<button class="dlbtn" id="dl-wide">Download wide row (CSV)</button>'
+      +'<button class="dlbtn" id="dl-long">Download full jsPsych data (JSON)</button></div>';
+  }
+  return h;
+}
+function attachDownloads(){
+  if(!forced) return;
+  const dl=(n,t,ty)=>{const b=new Blob([t],{type:ty});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=n;a.click();URL.revokeObjectURL(u);};
+  const w=wideRow();
+  const bw=document.getElementById('dl-wide'); if(bw) bw.onclick=()=>dl('wide_'+pid+'.csv',w.csv,'text/csv');
+  const bl=document.getElementById('dl-long'); if(bl) bl.onclick=()=>dl('long_'+pid+'.json',jsPsych.data.get().json(),'application/json');
+}
+</script>
+</body>
+</html>
