@@ -42,8 +42,9 @@ const COPY = {"consent_preamble": "<div class='wrap'><h3>About this study</h3><p
 
 /* DataPipe save -> OSF project 6xwqh (private). Experiment is Active. */
 const DATAPIPE_ID = "rrW097Bp4DWq";
-/* Prolific completion code — PLACEHOLDER, replace at Prolific wiring (step 5). */
-const COMPLETION_CODE = "PLACEHOLDER-CODE";
+/* Prolific completion. */
+const COMPLETION_CODE = "CX864VBB";
+const COMPLETION_URL = "https://app.prolific.com/submissions/complete?cc=CX864VBB";
 
 const params = new URLSearchParams(window.location.search);
 const FRAMES=['plain','setaside'], RUNGS=[1,2,3,4,5];
@@ -160,9 +161,12 @@ function wideRow(){
 // ---- the final on-screen message ----
 function endHTML(){
   let h='<div class="wrap"><h3>All done \u2014 thank you.</h3>'
-       +'<p>Your response has been saved. To confirm your submission, copy this completion code back into Prolific:</p>'
-       +'<p style="font-family:monospace;font-size:1.4rem;background:#fff;border:1px solid #ccc;border-radius:8px;padding:12px 16px;display:inline-block;">'
-       +esc(COMPLETION_CODE)+'</p></div>';
+       +'<p>Your response has been saved. To confirm your submission, copy the code below and paste it back into Prolific:</p>'
+       +'<p id="cc-box" style="font-family:monospace;font-size:1.6rem;letter-spacing:2px;background:#fff;border:1px solid #ccc;border-radius:8px;padding:12px 20px;display:inline-block;">'
+       +esc(COMPLETION_CODE)+'</p><br>'
+       +'<button class="dlbtn" id="copy-code" style="margin-top:8px;">Copy code</button>'
+       +'<p style="margin-top:16px;color:#666;font-size:0.95rem;">Or click here to return to Prolific automatically: '
+       +'<a href="'+COMPLETION_URL+'">Submit on Prolific</a></p></div>';
   if(forced){
     const w=wideRow();
     h+='<div class="summary"><hr><h3>Captured wide row (testing view)</h3>'
@@ -173,6 +177,20 @@ function endHTML(){
   return h;
 }
 function attachDownloads(){
+  // copy-code button (always present)
+  const cb=document.getElementById('copy-code');
+  if(cb) cb.onclick=()=>{
+    const done=()=>{cb.textContent='Copied \u2713';setTimeout(()=>{cb.textContent='Copy code';},2000);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(COMPLETION_CODE).then(done).catch(()=>{
+      const r=document.createRange();r.selectNode(document.getElementById('cc-box'));
+      window.getSelection().removeAllRanges();window.getSelection().addRange(r);document.execCommand('copy');
+      window.getSelection().removeAllRanges();done();});
+    } else {
+      const r=document.createRange();r.selectNode(document.getElementById('cc-box'));
+      window.getSelection().removeAllRanges();window.getSelection().addRange(r);document.execCommand('copy');
+      window.getSelection().removeAllRanges();done();
+    }
+  };
   if(!forced) return;
   const dl=(n,t,ty)=>{const b=new Blob([t],{type:ty});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=n;a.click();URL.revokeObjectURL(u);};
   const w=wideRow();
