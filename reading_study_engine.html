@@ -90,7 +90,10 @@ T.push({type:jsPsychSurveyMultiChoice,
 // 4) stimulus / pick
 T.push({type:jsPsychHtmlButtonResponse,
   stimulus:'<div class="wrap"><div class="qtext">'+esc(cell.question)+'</div><div class="paragraph">'+esc(paragraph)+'</div></div>',
-  choices:optionTexts, button_html:optBtn, data:{task:'pick'}});
+  choices:optionTexts, button_html:optBtn, data:{task:'pick'},
+  on_finish:(d)=>{ d.picked_position=(d.response!=null)?d.response+1:null;
+    d.picked_role=(d.response!=null)?posRoles[d.response]:null;
+    d.picked_is_cause=d.picked_role==='C'; }});
 // 5) why
 T.push({type:jsPsychSurveyText,
   questions:[{prompt:COPY.why_prompt,rows:3,columns:60,required:true,name:'why'}], data:{task:'why'}});
@@ -109,7 +112,7 @@ T.push({
   action: "save",
   experiment_id: DATAPIPE_ID,
   filename: SAVE_FILENAME,
-  data_string: ()=> wideRow().csv
+  data_string: ()=> jsPsych.data.get().csv()    // full jsPsych long data (DataPipe-native; has trial_type). Wide row derived in analysis.
 });
 
 // 9) completion code — terminal screen (no advance). Data has already saved above.
