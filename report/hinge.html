@@ -1,0 +1,579 @@
+<title>The Rung 2–3 Hinge</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  :root{
+    --ground:#F0F2F1; --surface:#FBFCFB; --raise:#FFFFFF;
+    --ink:#16191A; --body:#252A2B; --muted:#5C6564; --faint:#828A89;
+    --line:#D7DBD9; --line-soft:#E4E8E6;
+    --bound:#155E9C; --free:#BC6B10;
+    --bound-wash:#E6EEF6; --free-wash:#F7EDDF;
+    --sans:"IBM Plex Sans Condensed",ui-sans-serif,system-ui,sans-serif;
+    --serif:"Spectral",Georgia,"Times New Roman",serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#141615; --surface:#1B1E1D; --raise:#222624;
+      --ink:#E9EBEA; --body:#D2D7D5; --muted:#99A19F; --faint:#7C8482;
+      --line:#303432; --line-soft:#272B29;
+      --bound:#3F86C8; --free:#C08430;
+      --bound-wash:#17242E; --free-wash:#2A2318;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#141615; --surface:#1B1E1D; --raise:#222624;
+    --ink:#E9EBEA; --body:#D2D7D5; --muted:#99A19F; --faint:#7C8482;
+    --line:#303432; --line-soft:#272B29;
+    --bound:#3F86C8; --free:#C08430;
+    --bound-wash:#17242E; --free-wash:#2A2318;
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--body);font-family:var(--serif);
+       font-size:17px;line-height:1.62;-webkit-text-size-adjust:100%}
+  .page{max-width:720px;margin:0 auto;padding-inline:20px;padding-block:56px 96px}
+  @media (max-width:520px){ body{font-size:16px} .page{padding-block:36px 64px} }
+
+  h1,h2,h3,.eyebrow,.tag,th,.lede-meta,figcaption{font-family:var(--sans)}
+  h1{font-size:clamp(2.1rem,7vw,3.1rem);line-height:1.04;letter-spacing:-.02em;
+     font-weight:600;color:var(--ink);margin:0;text-wrap:balance}
+  h2{font-size:1.5rem;line-height:1.15;letter-spacing:-.01em;font-weight:600;
+     color:var(--ink);margin:0;text-wrap:balance}
+  h3{font-size:1.02rem;font-weight:600;color:var(--ink);margin:0;
+     letter-spacing:.01em;text-wrap:balance}
+  p{margin:0}
+  a{color:var(--bound)}
+  strong{font-weight:600;color:var(--ink)}
+  em{font-style:italic}
+
+  .eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+           color:var(--faint)}
+
+  header.masthead{display:flex;flex-direction:column;gap:18px;
+     padding-bottom:30px;border-bottom:2px solid var(--ink)}
+  .standfirst{font-size:1.16rem;line-height:1.5;color:var(--muted)}
+  .lede-meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.74rem;
+     letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+
+  section{display:flex;flex-direction:column;gap:18px;padding-block:44px;
+          border-bottom:1px solid var(--line-soft)}
+  section:last-of-type{border-bottom:none}
+  .sec-head{display:flex;flex-direction:column;gap:7px}
+
+  /* --- the ladder: gaps are proportional to the measured step size --- */
+  .ladder{list-style:none;margin:0;padding:0 0 0 26px;position:relative;
+          display:flex;flex-direction:column}
+  .rung{position:relative;padding-left:14px}
+  .rung::before{content:"";position:absolute;left:-26px;top:.52em;width:9px;height:9px;
+     border-radius:50%;background:var(--tone);box-shadow:0 0 0 3px var(--surface)}
+  .rung::after{content:"";position:absolute;left:-22px;top:1.5em;bottom:calc(-1 * var(--gap));
+     width:1px;background:var(--line)}
+  .rung:last-child::after{display:none}
+  .rung.brk::after{background:none;
+     border-left:1px dashed var(--free);opacity:.65}
+  .r1{--tone:var(--bound);--gap:25px;margin-top:0}
+  .r2{--tone:var(--bound);--gap:72px;margin-top:25px}
+  .r3{--tone:var(--free);--gap:33px;margin-top:72px}
+  .r4{--tone:var(--free);--gap:23px;margin-top:33px}
+  .r5{--tone:var(--free);margin-top:23px}
+  .rung-n{font-family:var(--mono);font-size:.78rem;color:var(--muted);
+     display:block;margin-bottom:2px}
+  .rung-t{font-size:1.05rem;line-height:1.45;color:var(--ink)}
+  .rung .hl{color:var(--tone);font-weight:500;font-style:italic}
+
+  /* six-dimension profile strip */
+  .prof{display:flex;gap:4px;margin-top:9px}
+  .prof > div{width:15px}
+  .prof .track{height:22px;background:var(--line-soft);position:relative;border-radius:1px}
+  .prof .fill{position:absolute;left:0;right:0;bottom:0;background:var(--tone);border-radius:1px}
+  .prof .gl{font-family:var(--mono);font-size:.62rem;color:var(--faint);
+     text-align:center;line-height:1.5}
+
+  .breakband{margin:0;padding:11px 14px;background:var(--free-wash);
+     border-left:3px solid var(--free);font-size:.93rem;line-height:1.5;color:var(--ink)}
+  .breakband b{font-family:var(--sans);font-weight:600;letter-spacing:.01em}
+
+  .tag{display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.1em;
+     text-transform:uppercase;padding:2px 7px;border-radius:2px;vertical-align:.14em}
+  .tag.b{background:var(--bound-wash);color:var(--bound)}
+  .tag.f{background:var(--free-wash);color:var(--free)}
+
+  /* --- length chart --- */
+  figure{margin:0;display:flex;flex-direction:column;gap:12px}
+  .chart{position:relative;display:flex;flex-direction:column;gap:7px;
+     padding-top:4px}
+  .crow{display:grid;grid-template-columns:52px 1fr;align-items:center;gap:10px}
+  .crow .lab{font-family:var(--mono);font-size:.74rem;color:var(--muted);text-align:right}
+  .barwrap{position:relative;height:22px}
+  .bar{height:22px;border-radius:0 3px 3px 0;display:flex;align-items:center;
+     justify-content:flex-end;padding-right:7px;font-family:var(--mono);font-size:.72rem;
+     color:var(--raise);font-weight:500}
+  .bar.b{background:var(--bound)} .bar.f{background:var(--free)}
+  .refline{position:absolute;left:calc(77.78% + 13.8px);top:0;bottom:29px;
+     width:1px;background:var(--ink);opacity:.55}
+  .refcap{display:block;width:calc(77.78% + 13.8px);text-align:right;padding-right:6px;
+     font-family:var(--mono);font-size:.7rem;color:var(--muted);letter-spacing:-.01em}
+  figcaption{font-size:.84rem;line-height:1.5;color:var(--muted)}
+
+  /* --- tables --- */
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{border-collapse:collapse;width:100%;min-width:410px;
+     font-family:var(--mono);font-size:.79rem;font-variant-numeric:tabular-nums}
+  caption{text-align:left;font-family:var(--sans);font-size:.72rem;font-weight:600;
+     letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding-bottom:9px}
+  th{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.04em;
+     text-transform:uppercase;color:var(--muted);text-align:right;
+     padding:0 0 7px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th:first-child,td:first-child{text-align:left;padding-left:0}
+  td{padding:6px 0 6px 14px;border-bottom:1px solid var(--line-soft);
+     text-align:right;color:var(--body);white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.key{font-family:var(--serif);font-size:.93rem;color:var(--ink);white-space:normal}
+  .weak{color:var(--free);font-weight:500}
+  .ok{color:var(--bound);font-weight:500}
+  tr.mark td{background:var(--free-wash)}
+
+  .eq{font-family:var(--mono);font-size:.78rem;line-height:1.75;color:var(--ink);
+     background:var(--surface);border:1px solid var(--line);border-radius:3px;
+     padding:14px 16px;overflow-x:auto;white-space:pre}
+
+  ol.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:13px}
+  ol.steps li{padding-left:5px}
+  ol.steps li::marker{font-family:var(--mono);font-size:.85rem;color:var(--free)}
+  ul.plain{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:11px}
+  ul.plain li::marker{color:var(--faint)}
+
+  .fixes{display:flex;flex-direction:column;gap:0}
+  .fix{display:grid;grid-template-columns:30px 1fr;gap:14px;
+       padding-block:17px;border-bottom:1px solid var(--line-soft)}
+  .fix:last-child{border-bottom:none}
+  .fix .num{font-family:var(--mono);font-size:1.15rem;color:var(--free);line-height:1.25}
+  .fix .txt{display:flex;flex-direction:column;gap:6px}
+  .fix p{font-size:.95rem;line-height:1.55}
+
+  .spec{font-family:var(--serif);font-style:italic;color:var(--ink)}
+  .note{font-size:.88rem;line-height:1.55;color:var(--muted);
+     border-left:2px solid var(--line);padding-left:14px}
+
+  footer{padding-top:34px;font-size:.82rem;line-height:1.6;color:var(--faint);
+     display:flex;flex-direction:column;gap:9px}
+  code{font-family:var(--mono);font-size:.86em;color:var(--ink)}
+  @media (prefers-reduced-motion:no-preference){a{transition:opacity .15s}}
+  a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--bound);outline-offset:2px}
+</style>
+
+<div class="page">
+
+<header class="masthead">
+  <p class="eyebrow">Reading study · stimulus &amp; design analysis</p>
+  <h1>The rung 2–3 hinge</h1>
+  <p class="standfirst">The self-blame ladder is not a gradient. Forty-seven per cent
+  of it happens in a single step — and that step is currently indistinguishable from
+  sentence length.</p>
+  <div class="lede-meta">
+    <span>Source · reading_study_engine.html</span>
+    <span>10 cells · 2 frames × 5 rungs</span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">01 — What varies</p>
+    <h2>The design is clean, and that makes it readable</h2>
+  </div>
+  <p>Reading the sealed <code>STIMULI</code> object straight out of the engine: across
+  all ten cells the <strong>cause</strong>, <strong>scene</strong> and <strong>neutral</strong>
+  sentences are literally one string each. Only the self-blame sentence moves across
+  rungs; only the question wording moves across frames. One trial per person, four
+  sentences in a random order, pick one.</p>
+  <p>So whatever the ladder does, it does it through five sentences. Here they are.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">02 — The core</p>
+    <h2>The ladder has a hinge in it</h2>
+  </div>
+  <p>I coded all five on six grammatical dimensions — what is predicated, over what
+  span of time, with how much commitment, across how wide a set of people, with how
+  much agency left in the subject, and whether the sentence still refers to the
+  birthday at all. The coding is my judgment; every cell's reasoning is in the repo.
+  <strong>The vertical gaps below are drawn to the measured step sizes.</strong></p>
+
+  <ol class="ladder">
+    <li class="rung r1">
+      <span class="rung-n">(1) &nbsp;<span class="tag b">episode-bound</span></span>
+      <p class="rung-t">I keep wishing I had simply remembered to send her
+        <span class="hl">the invitation</span>.</p>
+      <div class="prof">
+        <div><div class="track"><div class="fill" style="height:0%"></div></div><div class="gl">σ</div></div>
+        <div><div class="track"><div class="fill" style="height:10%"></div></div><div class="gl">τ</div></div>
+        <div><div class="track"><div class="fill" style="height:5%"></div></div><div class="gl">ε</div></div>
+        <div><div class="track"><div class="fill" style="height:0%"></div></div><div class="gl">δ</div></div>
+        <div><div class="track"><div class="fill" style="height:0%"></div></div><div class="gl">α</div></div>
+        <div><div class="track"><div class="fill" style="height:0%"></div></div><div class="gl">κ</div></div>
+      </div>
+    </li>
+    <li class="rung r2 brk">
+      <span class="rung-n">(2) &nbsp;<span class="tag b">episode-bound</span></span>
+      <p class="rung-t">I feel stupid that <span class="hl">I forgot to include</span>
+        one of my closest friends.</p>
+      <div class="prof">
+        <div><div class="track"><div class="fill" style="height:30%"></div></div><div class="gl">σ</div></div>
+        <div><div class="track"><div class="fill" style="height:25%"></div></div><div class="gl">τ</div></div>
+        <div><div class="track"><div class="fill" style="height:30%"></div></div><div class="gl">ε</div></div>
+        <div><div class="track"><div class="fill" style="height:10%"></div></div><div class="gl">δ</div></div>
+        <div><div class="track"><div class="fill" style="height:15%"></div></div><div class="gl">α</div></div>
+        <div><div class="track"><div class="fill" style="height:0%"></div></div><div class="gl">κ</div></div>
+      </div>
+    </li>
+    <li class="rung r3">
+      <span class="rung-n">(3) &nbsp;<span class="tag f">person-bound</span></span>
+      <p class="rung-t">I have started to wonder if I will <span class="hl">ever</span>
+        be able to deeply connect with <span class="hl">good people</span>.</p>
+      <div class="prof">
+        <div><div class="track"><div class="fill" style="height:60%"></div></div><div class="gl">σ</div></div>
+        <div><div class="track"><div class="fill" style="height:80%"></div></div><div class="gl">τ</div></div>
+        <div><div class="track"><div class="fill" style="height:40%"></div></div><div class="gl">ε</div></div>
+        <div><div class="track"><div class="fill" style="height:70%"></div></div><div class="gl">δ</div></div>
+        <div><div class="track"><div class="fill" style="height:35%"></div></div><div class="gl">α</div></div>
+        <div><div class="track"><div class="fill" style="height:100%"></div></div><div class="gl">κ</div></div>
+      </div>
+    </li>
+    <li class="rung r4">
+      <span class="rung-n">(4) &nbsp;<span class="tag f">person-bound</span></span>
+      <p class="rung-t">I am starting to believe I am just
+        <span class="hl">not interesting enough to hold on to</span>.</p>
+      <div class="prof">
+        <div><div class="track"><div class="fill" style="height:90%"></div></div><div class="gl">σ</div></div>
+        <div><div class="track"><div class="fill" style="height:85%"></div></div><div class="gl">τ</div></div>
+        <div><div class="track"><div class="fill" style="height:70%"></div></div><div class="gl">ε</div></div>
+        <div><div class="track"><div class="fill" style="height:85%"></div></div><div class="gl">δ</div></div>
+        <div><div class="track"><div class="fill" style="height:80%"></div></div><div class="gl">α</div></div>
+        <div><div class="track"><div class="fill" style="height:100%"></div></div><div class="gl">κ</div></div>
+      </div>
+    </li>
+    <li class="rung r5">
+      <span class="rung-n">(5) &nbsp;<span class="tag f">person-bound</span></span>
+      <p class="rung-t">I lie awake certain that I'm <span class="hl">not lovable</span>
+        and deserve to be alone <span class="hl">my whole life</span>.</p>
+      <div class="prof">
+        <div><div class="track"><div class="fill" style="height:100%"></div></div><div class="gl">σ</div></div>
+        <div><div class="track"><div class="fill" style="height:100%"></div></div><div class="gl">τ</div></div>
+        <div><div class="track"><div class="fill" style="height:100%"></div></div><div class="gl">ε</div></div>
+        <div><div class="track"><div class="fill" style="height:100%"></div></div><div class="gl">δ</div></div>
+        <div><div class="track"><div class="fill" style="height:100%"></div></div><div class="gl">α</div></div>
+        <div><div class="track"><div class="fill" style="height:100%"></div></div><div class="gl">κ</div></div>
+      </div>
+    </li>
+  </ol>
+
+  <p class="breakband"><b>The step from (2) to (3) is 2.75 of the ladder's 5.85 total
+  — 47% of the whole thing in one move.</b> A principal components decomposition
+  agrees: depth really is close to one dial (PC1 takes 93.9% of the variance), but the
+  spacing along it is +0.36, <b>+1.20</b>, +0.48, +0.34.</p>
+
+  <p><strong>Rungs 1 and 2 are still about the birthday. Rungs 3, 4 and 5 are about
+  the person.</strong> Rung 1 says <span class="spec">the invitation</span>; rung 2
+  says <span class="spec">I forgot to include</span>. Neither can be understood
+  without the cause sentence. From rung 3 on, Anna is gone, the birthday is gone,
+  the invitation is gone — <span class="spec">good people</span>,
+  <span class="spec">lovable</span>, <span class="spec">alone</span> refer to nothing
+  in the paragraph.</p>
+
+  <p>That is not a difference of degree in how bad the writer feels. It is a change
+  in what kind of sentence it is. Rungs 1–2 <em>elaborate</em> the causal story.
+  Rungs 3–5 are a <em>rival</em> story, competing with the cause sentence to be what
+  the paragraph is about. Which is why the response curve should be a step, not a
+  line.</p>
+
+  <p class="note">Because paragraph order is shuffled, in roughly half the orders the
+  bound sentence precedes the cause sentence it depends on, making the dependency
+  cataphoric. That processing cost lands only on rungs 1–2, and it is randomised
+  rather than controlled.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">03 — What it is built from</p>
+    <h2>Each dimension is a known piece of machinery</h2>
+  </div>
+  <ul class="plain">
+    <li><strong>σ is the stage-level / individual-level distinction.</strong> Rung 1's
+    complement denotes an event. By (4) the predicate is copular and individual-level;
+    by (5) it is <code>-able</code> — inherent potential. <span class="spec">Not
+    lovable</span> is not something that can be true of a moment.</li>
+    <li><strong>δ is genericity.</strong> <span class="spec">Her</span> → <span
+    class="spec">one of my closest friends</span> (a partitive, which evokes a set) →
+    <span class="spec">good people</span> (bare plural, kind-level) → the arbitrary
+    implicit subject of <span class="spec">to hold on to</span>: anyone.</li>
+    <li><strong>ε is complement selection</strong>, and it is the most carefully built
+    dimension. <span class="spec">Wish</span> + past perfect asserts nothing.
+    <span class="spec">Feel stupid that P</span> presupposes P but hedges the property.
+    <span class="spec">Wonder if</span> embeds an <em>interrogative</em> — nothing is
+    asserted at all. <span class="spec">Believe</span> commits.
+    <span class="spec">Certain that</span> commits fully. Read in series, the writer's
+    grip on the claim tightens clause by clause.</li>
+    <li><strong>α is voice and morphology</strong>, and it is the quietest dimension.
+    <code>-able</code> is passive-potential: <span class="spec">lovable</span> means
+    <em>able to be loved</em>, so the self is the <em>patient</em> of an unrealised
+    action by unnamed others. The grammar drains agency out of the subject as the
+    ladder climbs, then <span class="spec">deserve to be alone</span> delivers a
+    verdict of which the self is merely the recipient.</li>
+  </ul>
+
+  <h3>Where the frame manipulation does not reach</h3>
+  <p>The setaside question is <span class="spec">"Setting aside how it makes the
+  writer feel, which is the most important sentence…"</span>. Two grammatical
+  problems. First, <span class="spec">it</span> has no antecedent — the reader must
+  invent one. Second, and much worse: <strong>the instruction names a feeling, and
+  the top of the ladder is not feelings.</strong> Rung 2 is literally <span
+  class="spec">I feel stupid</span> — a perfect lexical match. But rungs 3–5 are
+  belief reports: <span class="spec">wonder if</span>, <span class="spec">starting to
+  believe</span>, <span class="spec">certain that</span>. A belief that you are
+  unlovable is not a feeling, and a reader complying precisely has no grounds to set
+  it aside.</p>
+  <p>So the manipulation is strongest exactly where its lexical hook lands, and
+  weakest exactly where the construct is most extreme. That is either a confound or
+  the sharpest hypothesis in the study, depending entirely on whether you declare it
+  in advance. Declare it.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">04 — The problem</p>
+    <h2>The hinge is collinear with sentence length</h2>
+  </div>
+  <p>This is the most serious finding here. The cause sentence — the one the
+  self-blame sentence competes against — is 14 words.</p>
+
+  <figure>
+    <div class="chart">
+      <div class="crow"><span class="lab">(1)</span>
+        <div class="barwrap"><div class="bar b" style="width:66.7%" title="Rung 1 — 12 words">12</div></div></div>
+      <div class="crow"><span class="lab">(2)</span>
+        <div class="barwrap"><div class="bar b" style="width:72.2%" title="Rung 2 — 13 words">13</div></div></div>
+      <div class="crow"><span class="lab">(3)</span>
+        <div class="barwrap"><div class="bar f" style="width:94.4%" title="Rung 3 — 17 words">17</div></div></div>
+      <div class="crow"><span class="lab">(4)</span>
+        <div class="barwrap"><div class="bar f" style="width:83.3%" title="Rung 4 — 15 words">15</div></div></div>
+      <div class="crow"><span class="lab">(5)</span>
+        <div class="barwrap"><div class="bar f" style="width:88.9%" title="Rung 5 — 16 words">16</div></div></div>
+      <div class="refline" aria-hidden="true"></div>
+      <span class="refcap">cause sentence = 14 words &uarr;</span>
+    </div>
+    <figcaption>Word count per rung. Blue = episode-bound, amber = person-bound.
+    Rungs 1–2 are shorter than the cause sentence; rungs 3–5 are longer.
+    <strong>The length crossover falls in exactly the same place as the grammatical
+    hinge.</strong> corr(rung, length) = .76.</figcaption>
+  </figure>
+
+  <p>Since "pick the most important sentence" is known to be pulled by length and
+  informativeness, <strong>a step at 2→3 is currently unattributable</strong> —
+  depth and length predict the identical pattern, and no amount of N will separate
+  them.</p>
+
+  <h3>Two sentences that break it</h3>
+  <p>Both written and word-counted to cross the two factors:</p>
+  <ul class="plain">
+    <li><span class="tag b">episode-bound</span> <strong>17 words</strong>, matching
+    rung 3 — <span class="spec">"I keep going over the day I wrote the guest list,
+    wondering how I missed her name."</span></li>
+    <li><span class="tag f">person-bound</span> <strong>12 words</strong>, matching
+    rung 1 — <span class="spec">"I have started to think I am simply not someone
+    people keep."</span></li>
+  </ul>
+  <p>Two extra cells, no engine change beyond the stimulus object, and length and
+  depth become orthogonal.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">05 — The maths</p>
+    <h2>It is a choice experiment, not a 2×5 ANOVA</h2>
+  </div>
+  <p>One trial, four alternatives, pick one. The matching estimator is McFadden's
+  conditional logit. Depth enters as a shift in the utility of the self-blame option
+  <em>only</em>, because that is the only option the manipulation touches.</p>
+
+  <div class="eq">V_ij = a_role(j) + p_pos(j)
+       + 1[role(j)=B] · (b0 + b_d·d(r) + b_f·f + b_x·d(r)·f)
+
+P(pick j) = exp(V_ij) / Σ_k exp(V_ik)</div>
+
+  <p>This buys three things a chi-square on <code>picked_is_cause</code> does not:
+  serial position is absorbed as a nuisance term instead of inflating error, the other
+  three options stay in the model, and <code>b_x</code> — the claim from section 03 —
+  becomes an actual parameter.</p>
+
+  <p><strong><code>d(r)</code> is where the linguistics becomes arithmetic.</strong>
+  Three codings are three rival theories: linear <code>(r−1)/4</code> says depth is a
+  dial; step <code>1[r ≥ 3]</code> says it is a switch; four free dummies let the data
+  say. Both restricted codings nest inside the free one, so the shape is testable
+  directly.</p>
+
+  <div class="scroll">
+    <table>
+      <caption>Power, 300 simulations per row, α = .05</caption>
+      <thead><tr><th>N total</th><th>depth</th><th>frame</th><th>depth × frame</th></tr></thead>
+      <tbody>
+        <tr><td>500</td><td class="ok">.96</td><td>.57</td><td class="weak">.10</td></tr>
+        <tr><td>750</td><td class="ok">.98</td><td>.70</td><td class="weak">.23</td></tr>
+        <tr><td>1000</td><td class="ok">1.00</td><td class="ok">.81</td><td class="weak">.24</td></tr>
+        <tr><td>1500</td><td class="ok">1.00</td><td class="ok">.93</td><td class="weak">.36</td></tr>
+        <tr><td>2000</td><td class="ok">1.00</td><td class="ok">.98</td><td class="weak">.47</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The estimator is sound — simulated and re-fitted, it recovers the true position
+  and role parameters to two decimals, and its false-positive rate under a flat truth
+  is nominal (.030, .027, .047). The depth effect is nearly free. The frame effect
+  needs about N = 1500. <strong>The interaction is at 47% power even at
+  N = 2000.</strong></p>
+
+  <h3>What size of interaction can this design see at all?</h3>
+  <div class="scroll">
+    <table>
+      <caption>Power for b_x — how much of the frame's grip is lost at depth</caption>
+      <thead><tr><th>frame effect, shallow → deep</th><th>N=500</th><th>N=1000</th><th>N=2000</th><th>N=3000</th></tr></thead>
+      <tbody>
+        <tr><td class="key">OR 2.27 → 1.86 · weakens slightly</td><td class="weak">.09</td><td class="weak">.10</td><td class="weak">.12</td><td class="weak">.16</td></tr>
+        <tr><td class="key">OR 2.27 → 1.49 · weakens clearly</td><td class="weak">.14</td><td class="weak">.26</td><td class="weak">.42</td><td>.59</td></tr>
+        <tr><td class="key">OR 2.27 → 1.24 · nearly gone</td><td class="weak">.22</td><td class="weak">.46</td><td>.68</td><td class="ok">.88</td></tr>
+        <tr class="mark"><td class="key"><strong>OR 2.27 → 1.00 · no effect at depth</strong></td><td class="weak">.39</td><td>.70</td><td class="ok">.93</td><td class="ok">1.00</td></tr>
+        <tr><td class="key">OR 2.27 → 0.83 · reverses</td><td>.52</td><td class="ok">.87</td><td class="ok">1.00</td><td class="ok">1.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Read the rows, not the columns. If the instruction merely weakens at depth, this
+  design cannot detect it at any budget you would plausibly spend. If it stops working
+  entirely, you have .70 power at N = 1000 and .93 at N = 2000.</p>
+  <p class="breakband"><b>And that is the payoff.</b> The grammatical argument — that
+  <span class="spec">"setting aside how it makes the writer feel"</span> has no
+  purchase on <span class="spec">wonder if</span>, <span class="spec">believe</span>,
+  <span class="spec">certain that</span> — does not predict gentle attenuation. It
+  predicts the instruction failing outright. That is the one version of the
+  interaction this study can afford to test.</p>
+
+  <h3>The trap: the interaction changes story with the scale</h3>
+  <div class="scroll">
+    <table>
+      <caption>Frame effect on choosing self-blame, same simulated truth</caption>
+      <thead><tr><th></th><th>plain</th><th>setaside</th><th>points</th><th>odds ratio</th></tr></thead>
+      <tbody>
+        <tr><td class="key">episode-bound (1–2)</td><td>.210</td><td>.105</td><td>+10.5</td><td>2.27</td></tr>
+        <tr><td class="key">person-bound (3–5)</td><td>.417</td><td>.327</td><td>+9.0</td><td>1.47</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>In percentage points the frame effect is flat and you write "no interaction". In
+  odds it is cut by more than a third and you write "the instruction loses its grip at
+  depth". Same data. The logit reports the second because it works in log odds.
+  Neither is wrong, but the one that matches the hypothesis is the odds one.
+  <strong>Decide which scale the claim lives on before you look.</strong></p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">06 — Rosetta</p>
+    <h2>One object, four notations</h2>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>the thing</th><th>grammar</th><th>maths</th><th>SQL</th></tr></thead>
+      <tbody>
+        <tr><td class="key">what the reader faced</td><td>4 sentences</td><td>alt. set J, V_ij</td><td>4 rows, one pid</td></tr>
+        <tr><td class="key">the judgment</td><td>"most important"</td><td>argmax over J</td><td>chosen = 1</td></tr>
+        <tr><td class="key"><strong>the hinge</strong></td><td><strong>κ: bound / free</strong></td><td><strong>1[r ≥ 3]</strong></td><td><strong>person_bound</strong></td></tr>
+        <tr><td class="key">the frame</td><td>restricts the QUD</td><td>f</td><td>frame</td></tr>
+        <tr><td class="key">the real claim</td><td>feelings ≠ beliefs</td><td>b_x</td><td>query Q4</td></tr>
+        <tr><td class="key">topic-sentence pull</td><td>first = thesis</td><td>p_pos</td><td>position</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>A translation table is a claim, so the repo tests it.
+  <code>rosetta_check.py</code> builds the design matrix twice — once by letting
+  SQLite reconstruct the choice sets, once in Python straight from the wide row — and
+  asserts the tensors are identical, the fitted coefficients differ by zero, and
+  SQL's <code>AVG()</code> and Python's <code>.mean()</code> agree to machine
+  precision. On 1,413 synthetic participants it passes.</p>
+  <p>The load-bearing insight is in the SQL: <strong>the saved wide row is a
+  compressed choice set.</strong> <code>pos1_role…pos4_role</code> plus
+  <code>picked_position</code> is exactly enough to reconstruct every option's role,
+  its serial position and — by joining the extracted stimuli — its text. Nothing
+  about the design is lost at save time, which means you never need to re-run
+  anyone.</p>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">07 — Before recruiting</p>
+    <h2>Things to fix</h2>
+  </div>
+  <div class="fixes">
+    <div class="fix"><span class="num">1</span><div class="txt">
+      <h3>Break the length confound</h3>
+      <p>Add the two sentences in section 04. Without them, a step at 2→3 has two
+      equally good explanations and the study cannot separate them.</p></div></div>
+    <div class="fix"><span class="num">2</span><div class="txt">
+      <h3>Two live engines, two destinations</h3>
+      <p><code>reading_study_engine.html</code> writes to DataPipe
+      <code>rrW097Bp4DWq</code> with the real completion code.
+      <code>reading_study_study.html</code> writes to <code>xTRjQwQBv3yi</code> with
+      <code>PLACEHOLDER-CODE</code>, and assigns conditions with client-side
+      <code>Math.random()</code> instead of the balanced rotation. Anyone reaching the
+      wrong file cannot submit on Prolific. Archive it.</p></div></div>
+    <div class="fix"><span class="num">3</span><div class="txt">
+      <h3>The assignment fallback is invisible</h3>
+      <p>If <code>getCondition</code> throws, the engine falls back to
+      <code>Math.random()</code> — correct behaviour, but nothing in the saved row
+      records which path was taken. One line: add <code>assign_method</code>.</p></div></div>
+    <div class="fix"><span class="num">4</span><div class="txt">
+      <h3>Every value is saved as a string</h3>
+      <p>The row is built with <code>String(v)</code>, so <code>picked_is_cause</code>
+      is the four characters <code>true</code>, not <code>1</code>. A natural
+      <code>df[df.picked_is_cause == True]</code> returns nothing, silently.</p></div></div>
+    <div class="fix"><span class="num">5</span><div class="txt">
+      <h3>Consider the failure mode at save</h3>
+      <p>The save runs before the completion-code screen, which is the right order for
+      data safety — but if it throws, the participant never sees the code and cannot
+      submit. A fallback costs you a reconcilable payment instead of a support ticket
+      and a lost participant.</p></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">08 — If it were mine</p>
+    <h2>What I would do next</h2>
+  </div>
+  <ol class="steps">
+    <li><strong>Add the two de-confounding sentences.</strong> Everything else is
+    downstream of this.</li>
+    <li><strong>Pre-register the hinge as primary</strong>, tested as rungs 1–2 vs 3–5
+    on P(cause). It reaches .92 power at N = 1000 as a plain two-proportion test, and
+    it is the claim the grammar actually makes.</li>
+    <li><strong>Demote the interaction to secondary</strong> and say in advance it is
+    underpowered — or reallocate to a 2×2 and buy it properly. Do not run a 2×5 at
+    N = 500 and interpret the interaction; at 10% power a significant result there is
+    more likely noise than signal.</li>
+    <li><strong>Fix the scale question before unblinding.</strong> Points or odds.
+    Write it down.</li>
+    <li><strong>Code the <code>why_text</code> against the same six dimensions.</strong>
+    It is the only channel where a reader says what they thought they were doing —
+    and the natural place to test whether someone who picks self-blame at rung 5 is
+    doing a different task than someone who picks it at rung 1.</li>
+  </ol>
+</section>
+
+<footer>
+  <p>The repository held only the two HTML files and a README — no stored notes from
+  earlier linguistic work, and no earlier conversation available to this session.
+  Everything above is reconstructed from the stimulus itself. Where a number is a
+  measurement it says so; where it is my judgment, the reasoning is in the code.</p>
+  <p>Code, coding rationales and every figure quoted here:
+  <code>REPORT.md</code> and <code>analysis/</code> on branch
+  <code>claude/depth-grammar-linguistic-comparison-8vxq5p</code>.</p>
+</footer>
+
+</div>
