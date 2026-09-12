@@ -1,0 +1,200 @@
+{
+  "dims": [
+    "sigma_predication",
+    "tau_temporal",
+    "epsilon_commitment",
+    "delta_domain",
+    "alpha_agency",
+    "kappa_free"
+  ],
+  "gloss": {
+    "sigma_predication": "scope of predication: bounded event -> individual-level property of the self",
+    "tau_temporal": "temporal quantification: one past act -> universal over the lifetime",
+    "epsilon_commitment": "speaker's epistemic commitment to the self-ascription",
+    "delta_domain": "width of the domain of other people quantified over",
+    "alpha_agency": "loss of agency: agent of an act -> patient of a property",
+    "kappa_free": "anaphoric freedom: bound to the birthday event vs free-standing claim about the person"
+  },
+  "codes": {
+    "1": {
+      "sigma_predication": {
+        "score": 0.0,
+        "why": "complement is an event ('send her the invitation'); nothing is predicated of the self"
+      },
+      "tau_temporal": {
+        "score": 0.1,
+        "why": "'keep' iterates the wishing, but its content is one bounded past act"
+      },
+      "epsilon_commitment": {
+        "score": 0.05,
+        "why": "'wish' + past perfect = counterfactual desire; asserts nothing about the self"
+      },
+      "delta_domain": {
+        "score": 0.0,
+        "why": "one referent: 'her'"
+      },
+      "alpha_agency": {
+        "score": 0.0,
+        "why": "'I ... remembered', 'I ... send': the self is agent throughout"
+      },
+      "kappa_free": {
+        "score": 0.0,
+        "why": "lexically bound to the cause: 'invitation', 'remembered to send'"
+      }
+    },
+    "2": {
+      "sigma_predication": {
+        "score": 0.3,
+        "why": "'stupid' is a property word but sits under 'feel' and is tied to the episode"
+      },
+      "tau_temporal": {
+        "score": 0.25,
+        "why": "present-tense feeling about a bounded past act"
+      },
+      "epsilon_commitment": {
+        "score": 0.3,
+        "why": "'feel X that P': P is presupposed (factive), but 'feel' not 'am' hedges the property"
+      },
+      "delta_domain": {
+        "score": 0.1,
+        "why": "'one of my closest friends': still one referent, but a partitive evokes the set"
+      },
+      "alpha_agency": {
+        "score": 0.15,
+        "why": "matrix subject is an experiencer; the self is still agent of the omission"
+      },
+      "kappa_free": {
+        "score": 0.0,
+        "why": "still bound to the cause: 'forgot to include'"
+      }
+    },
+    "3": {
+      "sigma_predication": {
+        "score": 0.6,
+        "why": "predicate is an ability ('be able to connect'): a disposition, not an event"
+      },
+      "tau_temporal": {
+        "score": 0.8,
+        "why": "'will ever': NPI under a question-embedding verb, unbounded future"
+      },
+      "epsilon_commitment": {
+        "score": 0.4,
+        "why": "'wonder if' embeds an INTERROGATIVE - nothing is asserted; 'have started to' hedges again"
+      },
+      "delta_domain": {
+        "score": 0.7,
+        "why": "'good people': bare plural, kind-level. Domain jumps from a person to a kind"
+      },
+      "alpha_agency": {
+        "score": 0.35,
+        "why": "'connect with' is agentive but embedded under 'be able to': capacity, not act"
+      },
+      "kappa_free": {
+        "score": 1.0,
+        "why": "the event is gone: no Anna, no birthday, no invitation"
+      }
+    },
+    "4": {
+      "sigma_predication": {
+        "score": 0.9,
+        "why": "copular 'I am just not interesting enough': individual-level property of the self"
+      },
+      "tau_temporal": {
+        "score": 0.85,
+        "why": "individual-level predicates are temporally unbounded by default"
+      },
+      "epsilon_commitment": {
+        "score": 0.7,
+        "why": "'believe' is doxastic and commits; hedged only by 'am starting to' and 'just'"
+      },
+      "delta_domain": {
+        "score": 0.85,
+        "why": "'to hold on to' has an arbitrary implicit subject: anyone at all"
+      },
+      "alpha_agency": {
+        "score": 0.8,
+        "why": "the self is the OBJECT of 'hold on to' and subject of a copula"
+      },
+      "kappa_free": {
+        "score": 1.0,
+        "why": "free-standing claim about the person"
+      }
+    },
+    "5": {
+      "sigma_predication": {
+        "score": 1.0,
+        "why": "'lovable': -able marks inherent potential - individual-level and modal"
+      },
+      "tau_temporal": {
+        "score": 1.0,
+        "why": "'my whole life': explicit universal quantification over the lifespan"
+      },
+      "epsilon_commitment": {
+        "score": 1.0,
+        "why": "'certain that': full commitment, no hedge anywhere in the clause"
+      },
+      "delta_domain": {
+        "score": 1.0,
+        "why": "'lovable' = by anyone; 'alone' = universal negation of all company"
+      },
+      "alpha_agency": {
+        "score": 1.0,
+        "why": "-able is passive-potential: the self is patient of an unrealised loving; 'deserve' delivers a verdict on the self"
+      },
+      "kappa_free": {
+        "score": 1.0,
+        "why": "free-standing claim about the person"
+      }
+    }
+  },
+  "surface": {
+    "1": {
+      "words": 12,
+      "chars": 66,
+      "mean_wordlen": 4.5,
+      "neg": 0,
+      "hedge": 2,
+      "modal": 0
+    },
+    "2": {
+      "words": 13,
+      "chars": 65,
+      "mean_wordlen": 4.0,
+      "neg": 0,
+      "hedge": 1,
+      "modal": 0
+    },
+    "3": {
+      "words": 17,
+      "chars": 83,
+      "mean_wordlen": 3.88,
+      "neg": 0,
+      "hedge": 2,
+      "modal": 3
+    },
+    "4": {
+      "words": 15,
+      "chars": 72,
+      "mean_wordlen": 3.8,
+      "neg": 1,
+      "hedge": 2,
+      "modal": 0
+    },
+    "5": {
+      "words": 16,
+      "chars": 79,
+      "mean_wordlen": 3.94,
+      "neg": 1,
+      "hedge": 0,
+      "modal": 1
+    }
+  },
+  "pc1": {
+    "1": -1.2658264445083716,
+    "2": -0.9062946606908279,
+    "3": 0.29329233114074454,
+    "4": 0.770175993360336,
+    "5": 1.1086527806981195
+  },
+  "pc1_var": 0.9388792891238913
+}

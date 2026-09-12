@@ -1,0 +1,402 @@
+{
+  "stimuli": {
+    "plain": {
+      "1": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I keep wishing I had simply remembered to send her the invitation.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Which is the most important sentence in this paragraph?"
+      },
+      "2": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I feel stupid that I forgot to include one of my closest friends.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Which is the most important sentence in this paragraph?"
+      },
+      "3": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I have started to wonder if I will ever be able to deeply connect with good people.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Which is the most important sentence in this paragraph?"
+      },
+      "4": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I am starting to believe I am just not interesting enough to hold on to.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Which is the most important sentence in this paragraph?"
+      },
+      "5": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I lie awake certain that I'm not lovable and deserve to be alone my whole life.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Which is the most important sentence in this paragraph?"
+      }
+    },
+    "setaside": {
+      "1": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I keep wishing I had simply remembered to send her the invitation.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"
+      },
+      "2": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I feel stupid that I forgot to include one of my closest friends.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"
+      },
+      "3": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I have started to wonder if I will ever be able to deeply connect with good people.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"
+      },
+      "4": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I am starting to believe I am just not interesting enough to hold on to.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"
+      },
+      "5": {
+        "cause": "Anna stopped talking to me because I forgot to invite her to my birthday.",
+        "selfblame": "I lie awake certain that I'm not lovable and deserve to be alone my whole life.",
+        "scene": "Anna and I used to talk every single day.",
+        "neutral": "We had been close for almost two years.",
+        "question": "Setting aside how it makes the writer feel, which is the most important sentence in this paragraph?"
+      }
+    }
+  },
+  "copy": {
+    "consent_preamble": "<div class='wrap'><h3>About this study</h3><p>You’re invited to take part in a short research study about how people read.</p><p><b>What you’ll do:</b> Read one short paragraph and answer two quick questions about it. It takes about 2–3 minutes.</p><p><b>Your data:</b> Your responses are de-identified for analysis. We record your responses, the time you take, and basic background information such as age range and gender. We do not collect your name. Your Prolific ID is collected only to confirm payment and manage data quality, and it will not be included in any published data.</p><p><b>Voluntary:</b> Taking part is your choice. You can stop at any time by closing the window; you’ll simply not be compensated for an incomplete response.</p><p><b>Contact:</b> Questions can be sent to asniaasim@gmail.com. This study is run by Asnia Asim, independent researcher.</p><p>By selecting “I agree” below, you confirm you are 18 or older, fluent in English, and consent to take part.</p></div>",
+    "consent_q": "Do you consent to take part?",
+    "consent_agree": "I agree — begin the study",
+    "consent_decline": "I do not wish to take part",
+    "instructions_html": "<div class='wrap'><h3>Instructions</h3><p>On the next screen you’ll see a short paragraph — a few sentences in which someone describes a difficult experience.</p><p>Please read the whole paragraph carefully. Then you’ll be asked to choose the <b>one sentence</b> you think is the most important, and to say in a line why you chose it.</p><p>There are no right or wrong answers. We’re interested in your honest judgment as a reader.</p></div>",
+    "attn_preamble": "<div class='wrap'><p>Please read the sentence below carefully, then answer the question.</p><p class='paragraph'>By afternoon, the river had turned rough and dangerous, and the rowers struggled against the current.</p></div>",
+    "attn_q": "By afternoon, the river was:",
+    "attn_options": [
+      "Calm",
+      "Rough",
+      "Frozen",
+      "The sentence doesn’t say"
+    ],
+    "attn_canonical": [
+      "calm",
+      "rough",
+      "frozen",
+      "nosay"
+    ],
+    "why_prompt": "Why did you pick this sentence? Explain briefly, in one sentence. If you didn’t really have a reason, that’s fine — just say so.",
+    "demo_preamble": "<div class='wrap'><p>A little about you (optional background). These help us describe who took part. They are not used to judge your answers.</p></div>",
+    "age_q": "Your age range:",
+    "age_options": [
+      "18 to 24",
+      "25 to 34",
+      "35 to 44",
+      "45 to 54",
+      "55 to 64",
+      "65+",
+      "Prefer not to say"
+    ],
+    "gender_q": "Your gender:",
+    "gender_options": [
+      "Woman",
+      "Man",
+      "Non binary",
+      "Prefer to self-describe",
+      "Prefer not to say"
+    ],
+    "debrief_html": "<div class='wrap'><h3>Thank you for taking part.</h3><p>This study looks at how different readers judge what matters most in a short text, and whether people vary in ways an automated system might not. Because the study is ongoing, we’re keeping the full details brief for now so later participants aren’t influenced. If you’d like to know more once it’s complete, you can contact asniaasim@gmail.com.</p><p>If anything in this study brought up difficult feelings, support is available. In the US you can call or text 988 (Suicide &amp; Crisis Lifeline); elsewhere, findahelpline.com lists free services by country.</p></div>"
+  },
+  "long": [
+    {
+      "frame": "plain",
+      "rung": 1,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "plain",
+      "rung": 1,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I keep wishing I had simply remembered to send her the invitation."
+    },
+    {
+      "frame": "plain",
+      "rung": 1,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "plain",
+      "rung": 1,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    },
+    {
+      "frame": "plain",
+      "rung": 2,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "plain",
+      "rung": 2,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I feel stupid that I forgot to include one of my closest friends."
+    },
+    {
+      "frame": "plain",
+      "rung": 2,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "plain",
+      "rung": 2,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    },
+    {
+      "frame": "plain",
+      "rung": 3,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "plain",
+      "rung": 3,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I have started to wonder if I will ever be able to deeply connect with good people."
+    },
+    {
+      "frame": "plain",
+      "rung": 3,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "plain",
+      "rung": 3,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    },
+    {
+      "frame": "plain",
+      "rung": 4,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "plain",
+      "rung": 4,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I am starting to believe I am just not interesting enough to hold on to."
+    },
+    {
+      "frame": "plain",
+      "rung": 4,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "plain",
+      "rung": 4,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    },
+    {
+      "frame": "plain",
+      "rung": 5,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "plain",
+      "rung": 5,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I lie awake certain that I'm not lovable and deserve to be alone my whole life."
+    },
+    {
+      "frame": "plain",
+      "rung": 5,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "plain",
+      "rung": 5,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    },
+    {
+      "frame": "setaside",
+      "rung": 1,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "setaside",
+      "rung": 1,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I keep wishing I had simply remembered to send her the invitation."
+    },
+    {
+      "frame": "setaside",
+      "rung": 1,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "setaside",
+      "rung": 1,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    },
+    {
+      "frame": "setaside",
+      "rung": 2,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "setaside",
+      "rung": 2,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I feel stupid that I forgot to include one of my closest friends."
+    },
+    {
+      "frame": "setaside",
+      "rung": 2,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "setaside",
+      "rung": 2,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    },
+    {
+      "frame": "setaside",
+      "rung": 3,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "setaside",
+      "rung": 3,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I have started to wonder if I will ever be able to deeply connect with good people."
+    },
+    {
+      "frame": "setaside",
+      "rung": 3,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "setaside",
+      "rung": 3,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    },
+    {
+      "frame": "setaside",
+      "rung": 4,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "setaside",
+      "rung": 4,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I am starting to believe I am just not interesting enough to hold on to."
+    },
+    {
+      "frame": "setaside",
+      "rung": 4,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "setaside",
+      "rung": 4,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    },
+    {
+      "frame": "setaside",
+      "rung": 5,
+      "role": "C",
+      "role_name": "cause",
+      "text": "Anna stopped talking to me because I forgot to invite her to my birthday."
+    },
+    {
+      "frame": "setaside",
+      "rung": 5,
+      "role": "B",
+      "role_name": "selfblame",
+      "text": "I lie awake certain that I'm not lovable and deserve to be alone my whole life."
+    },
+    {
+      "frame": "setaside",
+      "rung": 5,
+      "role": "S",
+      "role_name": "scene",
+      "text": "Anna and I used to talk every single day."
+    },
+    {
+      "frame": "setaside",
+      "rung": 5,
+      "role": "N",
+      "role_name": "neutral",
+      "text": "We had been close for almost two years."
+    }
+  ]
+}
