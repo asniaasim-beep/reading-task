@@ -1,13 +1,12 @@
 # Reading → dependency mapping (adapter spec)
 
-**Status:** specification only. No engine, no scheduler. This is a bounded adapter over the
-existing composer (backward route construction, prerequisite-first execution, exact-basis reuse,
-support checks, selective reopening). Interface names below are placeholders pending the
-composer's actual API.
+**Status:** specification only. No engine, no scheduler. Bounded spec pass over the existing
+composer (backward route construction, prerequisite-first execution, exact-basis reuse, support
+checks, selective reopening).
 
-**Revision 2** — §3 rewritten (reopening cannot establish edges; three perturbation types;
-support-set read-out), §6 split into three cost components, §7 relevance redefined against the
-question.
+**Revision 3** — §3 corrected (text intervention ≠ world intervention; withholding must exclude
+derived cache), §4 added (justification interface, alternative vs joint), §7 predictions made
+conditional, §9 reduced to one redundant-support probe, §10 records what the runtime provides.
 
 ## Why this comes first
 
@@ -15,19 +14,15 @@ The executor consumes a dependency structure. For text input, nothing currently 
 If the structure is hand-supplied — labelling the causal sentence "root" and the self-blame
 sentence "dependent" — the study's conclusion is encoded in its input.
 
-So the mapping is the object under test, not scaffolding for it:
-
 > Can DEPTH recognize warranted dependencies, or only execute dependencies we supplied?
 
 ## 1. Nodes
 
-Propositions, not sentences. A sentence may carry a claim and a stance about that claim, and
-those are different nodes. Keep a `sentence_id → [node_id]` map, because the study's response
-unit is the sentence.
+Propositions, not sentences. A sentence may carry a claim and a stance about that claim; those are
+different nodes. Keep a `sentence_id → [node_id]` map, because the study's response unit is the
+sentence.
 
 ## 2. Edge types
-
-The discriminating capability is telling the first of these from the second.
 
 | type | relation | example |
 |---|---|---|
@@ -35,139 +30,184 @@ The discriminating capability is telling the first of these from the second.
 | `evaluative` | A is a stance *about* B, contributing no independent support | "I'm terrible at my job" |
 | `background` | A holds context fixed for B | scene / neutral sentences |
 
-Self-blame is `evaluative` at every rung. "The driver left two hours late" is `support`.
-An engine that cannot separate these cannot do the task, whatever its graph looks like.
+Separating the first two is the capability under test.
 
 ## 3. Probing proposed structure
 
 ### Reopening follows edges; it cannot establish them
 
 Selective reopening propagates along **registered** dependencies. It answers *does a change travel
-this edge*, which presupposes the edge exists. Using it to establish that edge is circular — the
-machinery confirms what was registered, not what is warranted. Testing whether an existing
-connection propagates is a different operation from discovering that connection.
+this edge*, which presupposes the edge. Using it to establish that edge is circular. Discovering a
+dependency and updating a recorded one are different jobs.
 
-A proposed edge `B → A` is therefore tested by **re-evaluating the altered material
-independently**: recompute A's support from the perturbed material with the proposed edge withheld
-from the structure used for that re-evaluation. Propagation is what gets tested afterwards, once
-an edge is registered on independent grounds.
+A proposed edge `B → A` is tested by re-evaluating the altered material with that edge withheld.
 
-### Three distinct perturbations
+### Withholding is not arrow removal
 
-| operation | what it does | what it can show |
+Withholding must exclude everything **derived from** the edge, not just the edge itself:
+
+- the edge
+- any cached conclusion whose justification mentions it (see §4)
+- any annotation, label or summary produced while it was in force
+
+Operationally: invalidate every cache entry whose justification intersects the withheld set. An
+edge left out of the graph but alive in a cached intermediate has not been withheld.
+
+### Three perturbations, and what each licenses
+
+| operation | what it does | what it licenses |
 |---|---|---|
-| **remove evidence** | B deleted from the material | whether A's support drew on B at all |
-| **negate** | ¬B asserted in B's place | whether contrary evidence conflicts with A. Not equivalent to removal: it can supply support for a rival conclusion rather than merely withdrawing support for A |
-| **intervene** | B set irrespective of its own antecedents, severing B's incoming edges | whether the relation is causal rather than evidential — removal and negation cannot separate a causal edge from a shared antecedent |
+| **withdraw** | leaf deleted from the material | whether the recorded justification drew on it |
+| **negate** | ¬B asserted in B's place | not equivalent to withdrawal — it can supply support for a rival conclusion rather than withdrawing support for A |
+| **intervene** | B set irrespective of its antecedents | a causal reading, *only under stated assumptions* — see below |
 
-These are not interchangeable and the probe log must record which was used.
+Two limits, both previously overstated here:
 
-### Read the support set, not the conclusion
+**Text intervention is not world intervention.** Editing "the road was closed" tests the reader's
+response to changed information. It does not establish what opening the road would cause. Every
+causal claim from a text edit is a claim about the reader, not about the world, unless separately
+argued.
 
-An unchanged conclusion does not mean the perturbed node was inert. Two witnesses confirm a parcel
-arrived; remove one and the conclusion stands on the remaining witness, with weaker support. The
-removed witness still mattered.
+**Intervention is not the only route to a causal reading.** Observational identification is
+available under explicit causal assumptions (Pearl's calculus — back-door, front-door). The
+requirement is that any causal claim states its assumptions; the edit type alone does not confer
+one, and no edit type is disqualified a priori.
 
-The criterion for registering `B → A` is a change in A's **support set or support strength**, not a
-change in A's conclusion. Record per probe:
+## 4. Justification interface
 
-- conclusion: same / changed
-- supporting set: members lost or gained
-- support strength: before / after
+This is the missing reader capability. It borrows the alternative/joint distinction from
+provenance algebra (Green, Karvounarakis & Tannen, *Provenance semirings*, 2007), where `+` is
+alternative derivation and `×` is joint use. Established machinery, not new theory.
 
-An engine reading only conclusion-stability will score redundantly-supported dependencies as
-absent, and will mistake "still true" for "never mattered".
+### Form
 
-## 4. Read-out is separate from structure, and declared in advance
+```
+Justification = { Alt₁, Alt₂, … }    -- alternatives: any one suffices
+Alt           = { leaf_id, … }       -- joint: all members required together
+```
 
-The adapter emits a graph. A distinct read-out function maps graph → predicted most-important
-sentence. Candidate read-outs (pick and freeze **before** running):
+Sum-of-products over leaf identifiers. Alternatives kept **minimal** (no alternative a superset of
+another).
 
-- most-depended-upon node (max support out-degree)
-- node whose removal most changes warrant elsewhere
-- deepest fully-supported node
+Deliberately **no numeric strength**. Two justifications are not twice the confidence; they may
+share a leaf. `{ {a,b}, {a,c} }` shows `a` as common to both — a scalar hides exactly that. If a
+signed receipt turns out to be a photo of the courier scan, the honest justification is `{ {scan} }`,
+not two alternatives. Numbers would have reported two.
 
-Keeping these separate is what prevents "root" from silently meaning "answer". If DEPTH only
-tracks human judgment under one read-out, that is a result to report, not a parameter to tune.
-It must remain possible for the graph to be correct and the human judgment to fall elsewhere.
+Derived, set-valued, and worth more than a confidence score: `⋂ Altᵢ` = leaves no alternative can
+do without.
 
-## 5. Two independent ground truths — never merged
+### Operations
 
-1. **Dependency key**: annotators blind to DEPTH, using the §2 rubric. Report inter-annotator
-   agreement. Not labelled by anyone who holds the hypothesis.
-2. **Importance judgments**: the Prolific study's `picked_role`.
+| call | returns | notes |
+|---|---|---|
+| `justify(claim)` | `Justification` | minimal alternatives over leaf ids |
+| `evaluate_fresh(material, withheld)` | `(claim, Justification)` | **discovery.** Re-derives with `withheld` and everything derived from it excluded per §3. Must not consult the registered graph for the withheld edge. |
+| `propagate(change)` | reopened set | **update.** Runs over the registered graph; presupposes edges. |
 
-Scoring against (1) tests the mapping. Scoring against (2) tests the claim about human reading.
+**Separation rule:** an edge may be registered only on evidence from `evaluate_fresh`.
+`propagate` establishes consequences of registered edges, never the existence of one. Record which
+call produced each registration.
+
+### Outcome classification
+
+This replaces "did the answer change":
+
+| outcome | justification before → after | reading |
+|---|---|---|
+| `unaffected` | identical | leaf played no recorded part |
+| `narrowed` | some alternatives dropped, ≥1 remains | conclusion holds on fewer justifications |
+| `unsupported` | all alternatives dropped | conclusion loses recorded support |
+| `changed` | conclusion itself differs | |
+
+`narrowed` is why this section exists. A conclusion-only reader collapses `narrowed` into
+`unaffected` and concludes the withdrawn leaf never mattered.
+
+## 5. Read-out is separate from structure, and declared in advance
+
+The adapter emits a graph; a distinct read-out maps graph → predicted most-important sentence.
+Freeze the choice before running (most-depended-upon node / node whose withdrawal most changes
+justifications elsewhere / deepest supported node). This is what stops "root" meaning "answer". It
+must stay possible for the graph to be right and the human judgment to fall elsewhere.
+
+## 6. Two independent ground truths — never merged
+
+1. **Dependency key**: annotators blind to DEPTH, using the §2 rubric, agreement reported. Not
+   labelled by anyone holding the hypothesis.
+2. **Importance judgments**: the study's `picked_role`.
+
 A failure against (2) with a pass against (1) is informative, not a wash.
 
-## 6. Cost accounting
+## 7. Cost accounting
 
-Count as one budget: reading, graph construction, planning, verification, and calculation calls.
-Successful calculation calls alone are not the cost.
+Count reading, graph construction, planning, verification and calculation calls — not successful
+calculation calls alone. Report **three components separately**:
 
-Report the budget **split three ways** — they do not behave alike, and collapsing them hides the
-prediction:
+| component | covers |
+|---|---|
+| initial interpretation | reading, proposition extraction, first-pass justification |
+| planning | route construction, ordering |
+| downstream recomputation | work triggered in dependents once material is interpreted |
 
-| component | covers | expected across rungs 1→5 |
+**Predictions are conditional on the mechanism, and no total-slope prediction is made.** Revision 1
+predicted flat total cost across rungs; revision 2 replaced it with guaranteed-positive. Both were
+unwarranted. The measured slope depends on input length, caching, batching and the chosen cost
+measure, so those four must be declared before the run and held fixed.
+
+What a relevance-recognizing engine is committed to, conditionally: given a fixed cost measure and
+caching/batching configuration, downstream recomputation should not track escalation that leaves
+the question's justification unchanged. Interpretation may rise; whether it does is a property of
+the reader, not of relevance.
+
+## 8. Comparisons
+
+- **C1 — same supported answer, less total work.** Same justification, lower §7 budget.
+- **C2 — better answer under equal budget.** Anytime curves under a fixed cap.
+- **C3 — correct revision.** Relevance is defined **against the question asked**, not a preselected
+  root: a perturbation is relevant iff it changes what is warranted as an answer to that question.
+  Score by §4 outcome class, not conclusion identity. Report sensitivity **and** specificity — an
+  engine that never updates scores perfectly on stability and fails the task; one that updates on
+  everything is a salience engine.
+
+## 9. One redundant-support probe
+
+Not a testing programme. One item, three probes, no new dataset.
+
+Claim: *the parcel arrived.* Leaves: `scan` (courier scan), `receipt` (signed receipt),
+`blame` ("I'm hopeless at tracking deliveries"), plus background.
+Expected: `{ {scan}, {receipt} }`.
+
+| edit | relevance to *did the parcel arrive* | required outcome |
 |---|---|---|
-| initial interpretation | reading, proposition extraction, first-pass support assessment | **rises** |
-| planning | route construction, ordering | rises modestly at most |
-| downstream recomputation | work triggered in dependents once the material is interpreted | **flat** for a relevance-recognizing engine |
+| withdraw `scan` | relevant, redundant | `narrowed` → `{ {receipt} }` |
+| withdraw both | relevant, decisive | `unsupported` |
+| escalate `blame` | irrelevant | `unaffected` |
 
-Interpretation rises because determining that something is irrelevant is itself work: the escalated
-material has to be read and assessed before it can be set aside. Recognition is paid for.
+Pass condition: all three classified correctly — above all `narrowed` distinguished from
+`unaffected`. This tests the reader interface, not human reading.
 
-So the mechanism-specific prediction sits on the third row only, and **total cost slope is
-expected to be positive**. Predicting flat total cost from relevance would be wrong.
+The existing vignette (`reading_study_engine.html`: one scenario, 2 frames × 5 rungs) has only the
+irrelevant-perturbation arm, and now that relevance is question-relative it is a *candidate*
+irrelevant perturbation rather than an established one — the question asked there is which sentence
+is most important, and whether escalation is irrelevant to that is part of what is measured.
+Generalizing about human reading needs multiple scenarios with matched pairs; that is not this pass.
 
-A salience-driven engine is expected to show rising *downstream recomputation*, because escalation
-draws work the material does not warrant.
+## 10. What the runtime provides
 
-## 7. Comparisons
+Inspected dependency operations and verified result reader:
 
-- **C1 — same supported answer, less total work.** Unbounded semantics equal, §6 budget lower.
-- **C2 — better answer under equal budget.** Anytime curves under a fixed cap, not unbounded runs.
-- **C3 — correct revision.**
+| needed | present today | gap |
+|---|---|---|
+| justification | exact recorded inputs + child results, verified standing | records *the* derivation used — one joint set. The alternative (`+`) dimension is absent |
+| withdraw / replace | yes | — |
+| negation semantics, intervention | no | distinct meanings not implemented |
+| strength | no | **not wanted** — §4 is deliberately non-numeric |
+| `evaluate_fresh` over prose | no | reruns registered calculations on changed inputs; no evaluator that discovers dependencies with a candidate edge excluded |
 
-  **Relevance is defined against the question being asked**, not against a preselected root. A
-  perturbation is relevant iff it changes what is warranted *as an answer to that question*. The
-  same edit can be relevant to "why was the delivery late" and irrelevant to "how did the driver
-  feel about it". Relevance is therefore a property of the question–material pair, fixed before
-  the run, and never derived from whichever node the engine or the theory calls root.
+Two honest consequences:
 
-  Paired perturbations per scenario:
-  - *relevant* ("the driver left two hours late") → supported answer should change
-  - *irrelevant* ("I'm terrible at my job", escalated) → supported answer should hold
-
-  Score against §3's support-set read-out, not conclusion identity: a perturbation that leaves the
-  conclusion standing on reduced support counts as a change in support, not as no effect.
-
-  Report sensitivity **and** specificity. An engine that never updates scores perfectly on
-  stability and fails the task; one that updates on everything is a salience engine.
-  C3 is the discriminating comparison.
-
-## 8. Items — gap in the current study
-
-`reading_study_engine.html` is one vignette (Anna / birthday), 2 frames × 5 rungs. In C3 terms
-it has **only the irrelevant-perturbation arm**. There is no relevant-perturbation arm, so it
-cannot measure sensitivity, only stability — which is the half an inert engine passes for free.
-
-A second caution now that §7 fixes relevance to the question: the study asks *which sentence is
-most important*, and it is not established that affective escalation is irrelevant to that
-question — that is partly what the study measures. The delivery scenario is cleaner as an
-irrelevance arm because *why was the delivery late* has a determinate relation to the edit.
-The Anna arm should not be assumed to be an irrelevant perturbation; it is a candidate one.
-
-Needed before generalizing about human reading:
-- multiple scenarios (the delivery item is #2)
-- each with a matched relevant / irrelevant perturbation pair, relevance fixed per question
-- independent judgments per scenario
-
-## Open — needs the composer
-
-- can material be re-evaluated with a nominated edge withheld from the structure, or does
-  evaluation always run against the full registered graph?
-- are removal, negation and intervention separable operations, or is there only one edit path?
-- are support sets and support strength exposed per conclusion, or only conclusions?
-- actual signatures for route construction and support check
-- whether exact-basis reuse keys can accept text-derived nodes unchanged
+1. The bounded extension is **one dimension**: record sufficient sets, not only the used set.
+   Everything else in §4 is present or deliberately out of scope.
+2. `evaluate_fresh` is the exception. Discovery over prose does not exist in the runtime, so §3's
+   probe is not implementable as a pure adapter today. That gap is an evaluator, not a scheduler —
+   but it should be decided deliberately, not absorbed as adapter work.
