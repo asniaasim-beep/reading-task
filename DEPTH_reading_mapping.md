@@ -4,6 +4,9 @@
 composer (backward route construction, prerequisite-first execution, exact-basis reuse, support
 checks, selective reopening).
 
+**Revision 5** — §4 and §9 amended for the three negative-result scopes, derivation-level
+admission and qualified reporting; `no_recorded_support` replaces `unsupported`.
+
 **Revision 4** — §3, §4 and §10 amended for coverage, evidenced shared origin, and the
 adapter/evaluator split; evaluator contract split out to `DEPTH_fresh_evaluator_contract.md`.
 
@@ -94,13 +97,15 @@ Justification = { Alt₁, Alt₂, … }    -- alternatives: any one suffices
 Alt           = { leaf_id, … }       -- joint: all members required together
 ```
 
-Sum-of-products over leaf identifiers. Alternatives kept **inclusion-minimal** — an alternative is
-admitted only if no proper subset of it also suffices. Inclusion-minimal, not shortest: a shorter
-alternative does not dominate a longer one.
+Sum-of-products over leaf identifiers. Alternatives kept **inclusion-minimal** — inclusion-minimal,
+not shortest: a shorter alternative does not dominate a longer one. What is mechanically checkable
+is that no returned alternative is a superset of another **returned** one. That no smaller,
+undiscovered sufficient set exists is a claim about the search, not a set comparison.
 
 Every justification carries a **coverage** field: `complete_within(rule_system)` / `incomplete` /
-`unknown`, defaulting to `unknown`. It is what keeps "no justification found" from becoming "no
-justification exists". See `DEPTH_fresh_evaluator_contract.md` §4.
+`unknown`, defaulting to `unknown`. Completeness inside a bounded, decidable rule system is
+attainable; completeness over prose is not, and the field never claims the second. See
+`DEPTH_fresh_evaluator_contract.md` §4 for the three scopes a negative result can occupy.
 
 Deliberately **no numeric strength**. Two justifications are not twice the confidence; they may
 share a leaf. `{ {a,b}, {a,c} }` shows `a` as common to both — a scalar hides exactly that. If a
@@ -112,9 +117,9 @@ independence; similarity does not establish identity. A shared-origin claim carr
 evidence, and both documents stay retained and reachable after the collapse — nothing is merged
 away. Evaluator contract §5.
 
-`⋂ Altᵢ` is recorded as **`indispensable_among_recorded`**. Indispensable among the alternatives on
-record — it establishes global necessity only when coverage is `complete_within(R)`. Under
-`incomplete` or `unknown` it describes the search, not the material.
+`⋂ Altᵢ` is recorded as **`indispensable_among_recorded`**: necessity **within this formalization
+and rule system**, over the alternatives on record. There is no coverage value that turns it into
+global necessity — completeness inside the model does not certify the prose → formal translation.
 
 ### Operations
 
@@ -136,12 +141,17 @@ This replaces "did the answer change":
 |---|---|---|
 | `unaffected` | identical | leaf played no recorded part |
 | `narrowed` | some alternatives dropped, ≥1 remains | conclusion holds on fewer justifications |
-| `unsupported` | all alternatives dropped, coverage `complete_within(R)` | conclusion loses support under R |
-| `not_found` | all alternatives dropped, coverage `incomplete` or `unknown` | nothing found — **not** the same as unsupported |
+| `no_recorded_support` | every recorded alternative has lost a required premise | set comparison over the store — a claim about what is on record |
+| `no_derivation_within(R)` | additionally, exhaustive evaluation of R over the formalized material | stronger, and only with a verified exhaustion argument |
 | `changed` | conclusion itself differs | |
 
 `narrowed` is why this section exists. A conclusion-only reader collapses `narrowed` into
 `unaffected` and concludes the withdrawn leaf never mattered.
+
+`no_recorded_support` is **not** "unsupported". It is reported in the qualified form: *neither
+recorded justification remains supported; other possible readings have not been exhaustively
+searched.* Promoting it to `no_derivation_within(R)` requires the exhaustion argument, and neither
+class ever licenses "no possible support in this text or the world".
 
 ## 5. Read-out is separate from structure, and declared in advance
 
@@ -200,11 +210,13 @@ Expected: `{ {scan}, {receipt} }`.
 | edit | relevance to *did the parcel arrive* | required outcome |
 |---|---|---|
 | withdraw `scan` | relevant, redundant | `narrowed` → `{ {receipt} }` |
-| withdraw both | relevant, decisive | `unsupported` |
+| withdraw both | relevant, decisive | `no_recorded_support`, reported in qualified form |
 | escalate `blame` | irrelevant | `unaffected` |
 
 Pass condition: all three classified correctly — above all `narrowed` distinguished from
-`unaffected`. This tests the reader interface, not human reading.
+`unaffected`, and the second reported as *neither recorded justification remains supported; broader
+discovery remains incomplete* rather than as unconditional absence of support. This tests the
+reader interface, not human reading.
 
 The existing vignette (`reading_study_engine.html`: one scenario, 2 frames × 5 rungs) has only the
 irrelevant-perturbation arm, and now that relevance is question-relative it is a *candidate*
@@ -238,6 +250,8 @@ The two are therefore scoped apart:
 | justification adapter | preserve, compare, update **declared** derivations | existing store | this file, §4 |
 | fresh evaluator | propose source-grounded derivations from question + material | new capability | `DEPTH_fresh_evaluator_contract.md` |
 
-Nothing the evaluator produces is registered structure. Its output is `PROPOSED` until an
-independent check that did not generate it says otherwise; mechanical checks establish provenance
-and structural validity, never interpretive correctness.
+Nothing the evaluator produces is admitted structure. Its output is **saved** as `PROPOSED` with
+status and history — nothing generated is discarded — but saving is not admitting, and a `PROPOSED`
+reading must not become support by sitting in the store. Admission requires a checked *derivation*,
+not merely checked leaves: premises, inference steps, applicable conditions and interpretation
+warrant each pass their own procedure, recorded. Evaluator contract §3.
