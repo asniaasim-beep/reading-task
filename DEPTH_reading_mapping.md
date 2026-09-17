@@ -4,6 +4,9 @@
 composer (backward route construction, prerequisite-first execution, exact-basis reuse, support
 checks, selective reopening).
 
+**Revision 4** — §3, §4 and §10 amended for coverage, evidenced shared origin, and the
+adapter/evaluator split; evaluator contract split out to `DEPTH_fresh_evaluator_contract.md`.
+
 **Revision 3** — §3 corrected (text intervention ≠ world intervention; withholding must exclude
 derived cache), §4 added (justification interface, alternative vs joint), §7 predictions made
 conditional, §9 reduced to one redundant-support probe, §10 records what the runtime provides.
@@ -53,6 +56,11 @@ Withholding must exclude everything **derived from** the edge, not just the edge
 Operationally: invalidate every cache entry whose justification intersects the withheld set. An
 edge left out of the graph but alive in a cached intermediate has not been withheld.
 
+But intersection is not sufficient for **discovery**. It handles removal from recorded positive
+derivations; new contradictory information, a negation or an assumption change can matter without
+intersecting the prior leaf set. Intersection-based invalidation is a propagation mechanism and
+correct there. Discovery re-evaluates the changed material from scratch — evaluator contract §6.
+
 ### Three perturbations, and what each licenses
 
 | operation | what it does | what it licenses |
@@ -86,16 +94,27 @@ Justification = { Alt₁, Alt₂, … }    -- alternatives: any one suffices
 Alt           = { leaf_id, … }       -- joint: all members required together
 ```
 
-Sum-of-products over leaf identifiers. Alternatives kept **minimal** (no alternative a superset of
-another).
+Sum-of-products over leaf identifiers. Alternatives kept **inclusion-minimal** — an alternative is
+admitted only if no proper subset of it also suffices. Inclusion-minimal, not shortest: a shorter
+alternative does not dominate a longer one.
+
+Every justification carries a **coverage** field: `complete_within(rule_system)` / `incomplete` /
+`unknown`, defaulting to `unknown`. It is what keeps "no justification found" from becoming "no
+justification exists". See `DEPTH_fresh_evaluator_contract.md` §4.
 
 Deliberately **no numeric strength**. Two justifications are not twice the confidence; they may
 share a leaf. `{ {a,b}, {a,c} }` shows `a` as common to both — a scalar hides exactly that. If a
 signed receipt turns out to be a photo of the courier scan, the honest justification is `{ {scan} }`,
 not two alternatives. Numbers would have reported two.
 
-Derived, set-valued, and worth more than a confidence score: `⋂ Altᵢ` = leaves no alternative can
-do without.
+That collapse must be **evidenced**, not inferred. Distinct document ids do not establish
+independence; similarity does not establish identity. A shared-origin claim carries its own
+evidence, and both documents stay retained and reachable after the collapse — nothing is merged
+away. Evaluator contract §5.
+
+`⋂ Altᵢ` is recorded as **`indispensable_among_recorded`**. Indispensable among the alternatives on
+record — it establishes global necessity only when coverage is `complete_within(R)`. Under
+`incomplete` or `unknown` it describes the search, not the material.
 
 ### Operations
 
@@ -117,7 +136,8 @@ This replaces "did the answer change":
 |---|---|---|
 | `unaffected` | identical | leaf played no recorded part |
 | `narrowed` | some alternatives dropped, ≥1 remains | conclusion holds on fewer justifications |
-| `unsupported` | all alternatives dropped | conclusion loses recorded support |
+| `unsupported` | all alternatives dropped, coverage `complete_within(R)` | conclusion loses support under R |
+| `not_found` | all alternatives dropped, coverage `incomplete` or `unknown` | nothing found — **not** the same as unsupported |
 | `changed` | conclusion itself differs | |
 
 `narrowed` is why this section exists. A conclusion-only reader collapses `narrowed` into
@@ -208,6 +228,16 @@ Two honest consequences:
 
 1. The bounded extension is **one dimension**: record sufficient sets, not only the used set.
    Everything else in §4 is present or deliberately out of scope.
-2. `evaluate_fresh` is the exception. Discovery over prose does not exist in the runtime, so §3's
-   probe is not implementable as a pure adapter today. That gap is an evaluator, not a scheduler —
-   but it should be decided deliberately, not absorbed as adapter work.
+2. `evaluate_fresh` is the exception and is **not** adapter work. Discovery over prose does not
+   exist in the runtime. A small interface does not make that problem small.
+
+The two are therefore scoped apart:
+
+| component | job | substrate | document |
+|---|---|---|---|
+| justification adapter | preserve, compare, update **declared** derivations | existing store | this file, §4 |
+| fresh evaluator | propose source-grounded derivations from question + material | new capability | `DEPTH_fresh_evaluator_contract.md` |
+
+Nothing the evaluator produces is registered structure. Its output is `PROPOSED` until an
+independent check that did not generate it says otherwise; mechanical checks establish provenance
+and structural validity, never interpretive correctness.
