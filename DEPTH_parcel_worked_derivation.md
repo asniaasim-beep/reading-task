@@ -3,6 +3,9 @@
 Instantiates the three open decisions (`DEPTH_fresh_evaluator_contract.md` §9) on the parcel
 example. Not a contract, not a benchmark. One case, worked end to end.
 
+**Revision 3** — §5 extended: the copy is also a source. One origin claim has opposite effects on
+two questions, and retention has a substantive reason rather than a hygienic one.
+
 **Revision 2** — two interpretation errors corrected. A carrier scan was treated as delivery; a
 discovered copy was treated as disproving a signature. The formal traces are retained; what the
 documents warrant is corrected. Contract and mapping unchanged.
@@ -136,7 +139,44 @@ content**: withdrawing a document while retaining a photograph of it leaves the 
 material, so `narrowed` there was about the recorded alternatives, not about what the material
 still carries.
 
-Both documents remain retained and reachable.
+### The copy is also a source
+
+d2 has two roles, and the origin claim touches only the first.
+
+| role | d2 is | effect of `copy_of(d2,d1)` |
+|---|---|---|
+| **carrier** | a transmitter of d1's content | collapses. For *did the parcel arrive*, d2 adds nothing d1 did not already give |
+| **object** | a record in its own right | **none**. d2 witnesses its own existence, timestamp and custody — facts d1 cannot supply at all |
+
+Take a second question, *was a record of this consignment in the recipient's hands on the 14th*,
+with its own rule set `R_custody`:
+
+```prolog
+r3 :  held_on(R, T) :- depicts(D2, D1), consignment_record(D1, P),
+                       photographed_by(D2, R), timestamp(D2, T).
+```
+
+Under `R_custody`, **d2 is the only source**. d1 says nothing about who held what when, and
+`depicts(d2,d1)` — the very fact admitted in B1 — is now a *premise* rather than a collapse.
+
+So one admitted origin claim has opposite effects on two questions: it removes an alternative under
+`R_parcel` and supplies one under `R_custody`. Both propagate. This is the question-relativity of
+mapping §8 applied to **identity** rather than to relevance.
+
+The nesting terminates cleanly. For a photograph of a photograph of a record:
+
+- `copy_of` is **transitive for content** — all three collapse to one source for the delivery question
+- `copy_of` is **not collapsing for object-facts** — three entities, three existence, timestamp and
+  custody facts, no collapse at any depth
+
+One relation, two closure behaviours, selected by the question.
+
+### Why both documents are retained
+
+Not as deletion hygiene. **d2 is retained because it is a source in its own right.** Discarding it
+after the collapse would destroy the only evidence for `R_custody` while correctly fixing the count
+for `R_parcel` — the exact failure that merging duplicate records produces, and the reason this
+machinery deduplicates *support* without deduplicating *documents*.
 
 ## 6. Probe B2 — the signature is independently disproved
 
