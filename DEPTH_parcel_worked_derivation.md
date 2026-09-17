@@ -256,7 +256,7 @@ Revision can act at three different places, and they are not interchangeable:
 
 | site | what changed | effect on support |
 |---|---|---|
-| **identity** | how many independent origins the material has | support may be entirely unchanged; independence bookkeeping changes |
+| **identity** | how many independent origins the material has | *logical* support may be entirely unchanged — but any estimate whose value depends on counting the collapsed items as independent must be recomputed. Two records counted as two trials that turn out to be one trial change n, and the estimate with it. A conclusion can stay supported while its number moves |
 | **interpretation** | what a span warrants | the leaf is withdrawn; alternatives resting on it fail |
 | **inference** | whether a rule is applicable or warranted at all | the rule is withdrawn; every alternative using it fails |
 
@@ -266,6 +266,14 @@ Correction 2 conflated the identity site with the interpretation site.
 Two screenshots of one delivery confirmation are not two confirmations — and discovering the
 duplicate does not mean the parcel was never delivered. Recursion must propagate the particular
 change, not treat all three sites as deletion.
+
+**One hazard when this meets probability.** Collapsing is for *redundant reports of one fact*. It
+is not for *mutually exclusive ways one process could have reached an outcome* — distinct
+stochastic paths to the same state legitimately contribute probability and must be summed, not
+merged. The two cases look alike from the outside and the test is which they are: alternatives
+sharing an origin collapse, alternative worlds do not. The order quotient is what separates them,
+which is why weighting an unquotiented enumeration mis-weights in one direction and collapsing
+genuine paths mis-weights in the other.
 
 ## 11. What this does not show
 
